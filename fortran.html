@@ -1,0 +1,555 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Fortran APIs &#8212; AADG3 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python module API" href="python.html" />
+    <link rel="prev" title="Input files and command-line arguments" href="input.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fortran-apis">
+<h1>Fortran APIs<a class="headerlink" href="#fortran-apis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="program-aadg3">
+<h2>Program <code class="docutils literal notranslate"><span class="pre">AADG3</span></code><a class="headerlink" href="#program-aadg3" title="Permalink to this headline">¶</a></h2>
+<dl class="program">
+<dt id="f/aadg3">
+<em class="property">program  </em><code class="descname">aadg3</code><a class="headerlink" href="#f/aadg3" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Use :</th><td class="field-body"><a class="reference internal" href="#f/types" title="f/types: A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type ``dp``."><code class="xref f f-mod docutils literal notranslate"><span class="pre">types</span></code></a> (<a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-func docutils literal notranslate"><span class="pre">dp()</span></code></a>), <a class="reference internal" href="#f/math" title="f/math: Various mathematical constants and functions."><code class="xref f f-mod docutils literal notranslate"><span class="pre">math</span></code></a> (<a class="reference internal" href="#f/math/pi" title="f/math/pi"><code class="xref f f-func docutils literal notranslate"><span class="pre">pi()</span></code></a>, <a class="reference internal" href="#f/math/twopi" title="f/math/twopi"><code class="xref f f-func docutils literal notranslate"><span class="pre">twopi()</span></code></a>, <a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a>, <a class="reference internal" href="#f/math/get_elm" title="f/math/get_elm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_elm()</span></code></a>, <a class="reference internal" href="#f/io/load_rotation" title="f/io/load_rotation"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_rotation()</span></code></a>, <a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a>, <a class="reference internal" href="#f/core/generate_kicks" title="f/core/generate_kicks"><code class="xref f f-func docutils literal notranslate"><span class="pre">generate_kicks()</span></code></a>, <a class="reference internal" href="#f/core/laplace_solution" title="f/core/laplace_solution"><code class="xref f f-func docutils literal notranslate"><span class="pre">laplace_solution()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="f/math">
+<span id="module-math"></span><h2>Module <code class="docutils literal notranslate"><span class="pre">math</span></code><a class="headerlink" href="#f/math" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Description</p>
+<p>Various mathematical constants and functions.</p>
+<p class="rubric">Quick access</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#f/math/pi" title="f/math/pi"><code class="xref f f-var docutils literal notranslate"><span class="pre">pi</span></code></a>, <a class="reference internal" href="#f/math/twopi" title="f/math/twopi"><code class="xref f f-var docutils literal notranslate"><span class="pre">twopi</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Routines:</th><td class="field-body"><a class="reference internal" href="#f/math/factorial" title="f/math/factorial"><code class="xref f f-func docutils literal notranslate"><span class="pre">factorial()</span></code></a>, <a class="reference internal" href="#f/math/get_plm" title="f/math/get_plm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_plm()</span></code></a>, <a class="reference internal" href="#f/math/get_elm" title="f/math/get_elm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_elm()</span></code></a>, <a class="reference internal" href="#f/math/randn" title="f/math/randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">randn()</span></code></a>, <a class="reference internal" href="#f/math/leva_randn" title="f/math/leva_randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">leva_randn()</span></code></a>, <a class="reference internal" href="#f/math/leva_one_randn" title="f/math/leva_one_randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">leva_one_randn()</span></code></a>, <a class="reference internal" href="#f/math/lm_to_k" title="f/math/lm_to_k"><code class="xref f f-func docutils literal notranslate"><span class="pre">lm_to_k()</span></code></a>, <a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><a class="reference internal" href="#f/types" title="f/types: A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type ``dp``."><code class="xref f f-mod docutils literal notranslate"><span class="pre">types</span></code></a> (<a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-func docutils literal notranslate"><span class="pre">dp()</span></code></a>): A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type <code class="docutils literal notranslate"><span class="pre">dp</span></code>.</li>
+</ul>
+<p class="rubric">Variables</p>
+<ul>
+<li><dl class="variable">
+<dt id="f/math/pi">
+<code class="descclassname">math/</code><code class="descname">pi</code><a class="headerlink" href="#f/math/pi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">real</td>
+</tr>
+<tr class="field-even field"><th class="field-name">attrs:</th><td class="field-body">parameter/optional/default=3.1415926535897932384626433_dp</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><dl class="variable">
+<dt id="f/math/twopi">
+<code class="descclassname">math/</code><code class="descname">twopi</code><a class="headerlink" href="#f/math/twopi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">real</td>
+</tr>
+<tr class="field-even field"><th class="field-name">attrs:</th><td class="field-body">parameter/optional/default=6.283185307179586</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<p class="rubric">Subroutines and functions</p>
+<dl class="function">
+<dt id="f/math/factorial">
+<em class="property">function  </em><code class="descclassname">math/</code><code class="descname">factorial</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/factorial" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return:</th><td class="field-body"><strong>factorial</strong><em> [</em><em>integer</em><em>,</em><em>pure</em><em>]</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Called from:</th><td class="field-body"><code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/get_plm">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">get_plm</code><span class="sig-paren">(</span><em>x</em>, <em>lmax</em>, <em>plm</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/get_plm" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>lmax</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>plm</strong> (lmax + 1,lmax + 1)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/math/get_elm" title="f/math/get_elm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_elm()</span></code></a>, <code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/get_elm">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">get_elm</code><span class="sig-paren">(</span><em>inclination</em>, <em>lmax</em>, <em>elm</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/get_elm" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inclination</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em> :: in degrees</li>
+<li><strong>lmax</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em> :: maximum angular degree</li>
+<li><strong>elm</strong> (lmax + 1,lmax + 1)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a>, <code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Call to:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/math/get_plm" title="f/math/get_plm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_plm()</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/randn">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">randn</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/randn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates the array <code class="docutils literal notranslate"><span class="pre">x</span></code> with normally-distributed random
+variates with zero mean and unit variance using the polar form
+of the Box-Müller transform.  The length of <code class="docutils literal notranslate"><span class="pre">x</span></code> must be even
+otherwise the subroutine will <code class="docutils literal notranslate"><span class="pre">stop</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em> :: was 2d0 to trigger do while</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><a class="reference internal" href="#f/core/generate_kicks" title="f/core/generate_kicks"><code class="xref f f-func docutils literal notranslate"><span class="pre">generate_kicks()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/leva_randn">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">leva_randn</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/leva_randn" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (*)<em> [</em><em>real</em><em>]</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><a class="reference internal" href="#f/math/leva_one_randn" title="f/math/leva_one_randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">leva_one_randn()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="f/math/leva_one_randn">
+<em class="property">function  </em><code class="descclassname">math/</code><code class="descname">leva_one_randn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#f/math/leva_one_randn" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return:</th><td class="field-body"><strong>leva_one_randn</strong><em> [</em><em>real</em><em>]</em></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><a class="reference internal" href="#f/math/leva_randn" title="f/math/leva_randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">leva_randn()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/lm_to_k">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">lm_to_k</code><span class="sig-paren">(</span><em>l</em>, <em>m</em>, <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/lm_to_k" title="Permalink to this definition">¶</a></dt>
+<dd><p>A one-to-one relation that maps a pair of integers (l, m), with
+<code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">l</span></code>, into a continuous sequence.  Useful for looping
+over sequences of angular degrees and azimuthal orders,</p>
+<p>This is the inverse of <code class="docutils literal notranslate"><span class="pre">k_to_lm</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>l</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>m</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>k</strong><em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/math/k_to_lm">
+<em class="property">subroutine  </em><code class="descclassname">math/</code><code class="descname">k_to_lm</code><span class="sig-paren">(</span><em>k</em>, <em>l</em>, <em>m</em><span class="sig-paren">)</span><a class="headerlink" href="#f/math/k_to_lm" title="Permalink to this definition">¶</a></dt>
+<dd><p>A one-to-one relation that maps a non-negative integer to pair
+of integers (l, m), with <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;=</span> <span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">l</span></code>, assuming zero maps to
+(0, 0).  Useful for looping over sequences of angular degrees
+and azimuthal orders,</p>
+<p>This is the inverse of <code class="docutils literal notranslate"><span class="pre">lm_to_k</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>k</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>l</strong><em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>m</strong><em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a>, <code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="f/io">
+<span id="module-io"></span><h2>Module <code class="docutils literal notranslate"><span class="pre">io</span></code><a class="headerlink" href="#f/io" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Quick access</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Routines:</th><td class="field-body"><a class="reference internal" href="#f/io/load_modes" title="f/io/load_modes"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_modes()</span></code></a>, <a class="reference internal" href="#f/io/load_rotation" title="f/io/load_rotation"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_rotation()</span></code></a>, <a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><a class="reference internal" href="#f/types" title="f/types: A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type ``dp``."><code class="xref f f-mod docutils literal notranslate"><span class="pre">types</span></code></a> (<a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-func docutils literal notranslate"><span class="pre">dp()</span></code></a>): A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type <code class="docutils literal notranslate"><span class="pre">dp</span></code>.</li>
+</ul>
+<p class="rubric">Subroutines and functions</p>
+<dl class="subroutine">
+<dt id="f/io/load_modes">
+<em class="property">subroutine  </em><code class="descclassname">io/</code><code class="descname">load_modes</code><span class="sig-paren">(</span><em>filename</em>, <em>n_modes</em>, <em>l</em>, <em>n</em>, <em>freq</em>, <em>width</em>, <em>power</em>, <em>cycshift</em><span class="sig-paren">)</span><a class="headerlink" href="#f/io/load_modes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong><em> [</em><em>character</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>n_modes</strong><em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>l</strong> (*)<em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>n</strong> (*)<em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>freq</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>width</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>power</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+<li><strong>cycshift</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/io/load_rotation">
+<em class="property">subroutine  </em><code class="descclassname">io/</code><code class="descname">load_rotation</code><span class="sig-paren">(</span><em>filename</em>, <em>low</em>, <em>splitting</em><span class="sig-paren">)</span><a class="headerlink" href="#f/io/load_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong><em> [</em><em>character</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>low</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>splitting</strong> (-(low)+1,*,*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Call to:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/io/skip_comments">
+<em class="property">subroutine  </em><code class="descclassname">io/</code><code class="descname">skip_comments</code><span class="sig-paren">(</span><em>iounit</em>, <em>ierr</em><span class="sig-paren">)</span><a class="headerlink" href="#f/io/skip_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a file on unit <code class="docutils literal notranslate"><span class="pre">iounit</span></code>, advances to the next line not
+starting with <code class="docutils literal notranslate"><span class="pre">!</span></code> or <code class="docutils literal notranslate"><span class="pre">#</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>iounit</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>ierr</strong><em> [</em><em>integer</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/io/load_modes" title="f/io/load_modes"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_modes()</span></code></a>, <a class="reference internal" href="#f/io/load_rotation" title="f/io/load_rotation"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_rotation()</span></code></a>, <a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="f/core">
+<span id="module-core"></span><h2>Module <code class="docutils literal notranslate"><span class="pre">core</span></code><a class="headerlink" href="#f/core" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Description</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">core</span></code> module contains the main subroutines that AADG3 uses
+to generate the timeseries for an oscillation mode.</p>
+<p class="rubric">Quick access</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Routines:</th><td class="field-body"><a class="reference internal" href="#f/core/generate_kicks" title="f/core/generate_kicks"><code class="xref f f-func docutils literal notranslate"><span class="pre">generate_kicks()</span></code></a>, <a class="reference internal" href="#f/core/laplace_solution" title="f/core/laplace_solution"><code class="xref f f-func docutils literal notranslate"><span class="pre">laplace_solution()</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Needed modules</p>
+<ul class="simple">
+<li><a class="reference internal" href="#f/types" title="f/types: A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type ``dp``."><code class="xref f f-mod docutils literal notranslate"><span class="pre">types</span></code></a> (<a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-func docutils literal notranslate"><span class="pre">dp()</span></code></a>): A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type <code class="docutils literal notranslate"><span class="pre">dp</span></code>.</li>
+</ul>
+<p class="rubric">Subroutines and functions</p>
+<dl class="subroutine">
+<dt id="f/core/generate_kicks">
+<em class="property">subroutine  </em><code class="descclassname">core/</code><code class="descname">generate_kicks</code><span class="sig-paren">(</span><em>n_fine</em>, <em>cadence</em>, <em>tau</em>, <em>nsd</em>, <em>kicks</em><span class="sig-paren">)</span><a class="headerlink" href="#f/core/generate_kicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates an exponentially-damped random walk (i.e. an AR(1)
+process) that AADG3 uses to model granulation, for either the
+correlated or uncorrelated component of the driving term.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_fine</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>cadence</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>tau</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>nsd</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>kicks</strong> (*)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Use :</th><td class="field-body"><p class="first"><a class="reference internal" href="#f/math" title="f/math: Various mathematical constants and functions."><code class="xref f f-mod docutils literal notranslate"><span class="pre">math</span></code></a> (<a class="reference internal" href="#f/math/randn" title="f/math/randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">randn()</span></code></a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Called from:</th><td class="field-body"><p class="first"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/math/randn" title="f/math/randn"><code class="xref f f-func docutils literal notranslate"><span class="pre">randn()</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="subroutine">
+<dt id="f/core/laplace_solution">
+<em class="property">subroutine  </em><code class="descclassname">core/</code><code class="descname">laplace_solution</code><span class="sig-paren">(</span><em>n_cadences</em>, <em>n_relax</em>, <em>kick</em>, <em>freq0</em>, <em>damp0</em>, <em>power</em>, <em>dnu</em>, <em>dwid</em>, <em>pcad</em>, <em>phicad</em>, <em>vout</em><span class="sig-paren">)</span><a class="headerlink" href="#f/core/laplace_solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements the solution of the Laplace transformation of the
+damped, driven, harmonic oscillator, which AADG3 uses to compute
+the timeseries of each oscillation mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n_cadences</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>n_relax</strong><em> [</em><em>integer</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>kick</strong> (n_cadences+n_relax)<em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>freq0</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>damp0</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>power</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>dnu</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>dwid</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>pcad</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>phicad</strong><em> [</em><em>real</em><em>,</em><em>in</em><em>]</em></li>
+<li><strong>vout</strong> (n_cadences)<em> [</em><em>real</em><em>,</em><em>out</em><em>]</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Use :</th><td class="field-body"><p class="first"><a class="reference internal" href="#f/math" title="f/math: Various mathematical constants and functions."><code class="xref f f-mod docutils literal notranslate"><span class="pre">math</span></code></a> (<a class="reference internal" href="#f/math/twopi" title="f/math/twopi"><code class="xref f f-func docutils literal notranslate"><span class="pre">twopi()</span></code></a>)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a>, <code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="f/types">
+<span id="module-types"></span><h2>Module <code class="docutils literal notranslate"><span class="pre">types</span></code><a class="headerlink" href="#f/types" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Description</p>
+<p>A simple module defining common type definitions for the rest of
+AADG3.  Currently only defines the double precision type <code class="docutils literal notranslate"><span class="pre">dp</span></code>.</p>
+<p class="rubric">Quick access</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-var docutils literal notranslate"><span class="pre">dp</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Variables</p>
+<ul>
+<li><dl class="variable">
+<dt id="f/types/dp">
+<code class="descclassname">types/</code><code class="descname">dp</code><a class="headerlink" href="#f/types/dp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">type:</th><td class="field-body">integer</td>
+</tr>
+<tr class="field-even field"><th class="field-name">attrs:</th><td class="field-body">parameter/optional/default=kind(0.0d0)</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AADG3</a></h1>
+
+
+
+
+
+
+
+
+
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="input.html">Input files and command-line arguments</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fortran APIs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#program-aadg3">Program <code class="docutils literal notranslate"><span class="pre">AADG3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#f/math">Module <code class="docutils literal notranslate"><span class="pre">math</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#f/io">Module <code class="docutils literal notranslate"><span class="pre">io</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#f/core">Module <code class="docutils literal notranslate"><span class="pre">core</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#f/types">Module <code class="docutils literal notranslate"><span class="pre">types</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python module API</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="input.html" title="previous chapter">Input files and command-line arguments</a></li>
+      <li>Next: <a href="python.html" title="next chapter">Python module API</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Warrick Ball, Bill Chaplin.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/fortran.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
