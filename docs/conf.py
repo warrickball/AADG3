@@ -34,6 +34,7 @@
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.napoleon',
+              'sphinx.ext.githubpages',
               'sphinxfortran.fortran_domain',
               'sphinxfortran.fortran_autodoc']
 fortran_src = '../src/*.f90'
