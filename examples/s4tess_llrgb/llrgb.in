@@ -1,0 +1,25 @@
+! An example input file for AADG3.  This input produces something like
+! one TESS sector (roughly 27.4 days) for a low-luminosity red giant,
+! typical of the expected asteroseismic yield from TESS's
+! short-cadence data.
+
+! Parameters from Ball et al. (in prep)
+
+&controls
+    user_seed = 1728635
+    cadence = 120d0
+    n_cadences = 19728     ! 27.4d * 720 cadences/d
+    n_relax = 4320         ! 6d * 720 cadences/d
+    n_fine = 50
+    sig = 126.025d0
+    rho = 0.45d0
+    tau = 2026.77d0
+    inclination = 65.6907d0
+    p(1) = 1.505d0         ! median values from Lund et al. (2017)
+    p(2) = 0.62d0
+    p(3) = 0.075d0
+    add_granulation = .true.
+    modes_filename = 'llrgb.con'
+    rotation_filename = 'llrgb.rot'
+    output_filename = 'llrgb.asc'
+/
