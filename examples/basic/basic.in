@@ -1,0 +1,26 @@
+! A very simple example with makes a long timeseries for a handful of
+! high-amplitude modes.  The Python script `check.py` then slices the
+! timeseries up into shorter segments, computes their power spectra,
+! averages them and compares them to an independent model.  This can
+! be used for crude testing.
+
+&controls
+    user_seed = 84488442
+    n_relax = 10000
+    n_cadences = 1000000
+    n_fine = 50
+    cadence = 180d0
+    sig = 250d0
+    rho = 0d0
+    tau = 120d0
+    p(1) = 1d0
+    p(2) = 1d0
+    p(3) = 1d0
+    inclination = 45d0
+    cycle_period = 100d0
+    cycle_phase = 0d0
+    add_granulation = .true.
+    modes_filename = 'basic.con'
+    rotation_filename = 'basic.rot'
+    output_filename = 'basic.out'
+/
