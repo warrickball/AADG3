@@ -201,6 +201,39 @@ def load_rot(filename):
     return np.loadtxt(filename, dtype=rot_dtype, comments=['#', '!'])
 
 
+def generate_const_rot(modes, splitting=0.0):
+    """Create correctly-formatted data for rotational splittings with a
+    constant value (which is by default zero).  Useful if you have
+    mode data but not rotation data.
+
+    Parameters
+    ----------
+    modes: recarray
+        Structured array with mode frequency information from ``modes``
+        file, as returned by ``load_modes``.
+    splitting: float, optional
+        Constant rotational splitting in uHz. (default=0)
+    
+    Returns
+    -------
+    rot: recarray
+        Structured array with rotational splitting information in the
+        same format as returned by ``load_rot``.
+
+    """
+    rot = np.zeros(sum(modes['l']), dtype=rot_dtype)
+    rot['splitting'] = splitting
+    i = 0
+    for row in modes:
+        for m in range(1, row['l']+1):
+            rot['n'][i] = row['n']
+            rot['l'][i] = row['l']
+            rot['m'][i] = m
+            i += 1
+            
+    return rot
+    
+
 def save_namelist(filename, nml):
     """Saves the Fortran namelist in Python dict ``nml`` to a file named
     ``filename``.  The Python dict should have keys corresponding to
