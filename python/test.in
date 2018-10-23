@@ -1,0 +1,22 @@
+! A reference file to test the Python module
+
+&controls
+    user_seed = 1000
+    n_relax = 2000
+    n_cadences = 3000
+    n_fine = 50
+    cadence = 60d0
+    sig = 250d0
+    rho = 0d0
+    tau = 120d0
+    p(1) = 1d0
+    p(2) = 1d0
+    p(3) = 1d0
+    inclination = 45d0
+    cycle_period = 100d0
+    cycle_phase = 0d0
+    add_granulation = .true.
+    modes_filename = 'basic.con'
+    rotation_filename = 'basic.rot'
+    output_filename = 'basic.out'
+/
