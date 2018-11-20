@@ -17,7 +17,7 @@ e.g. `Chaplin et al. 2008`_) consortia.
 
 This version is derived from code delivered as version 2, which we
 incremented to the present version.  We publicly released the code as
-part of Ball et al. (in prep.), in which we also presented a large
+part of `Ball et al. (2018)`_, in which we also presented a large
 catalogue of mock TESS targets for which we generated data using
 AADG3.
 
@@ -29,6 +29,7 @@ research.
 .. _`Toutain et al. (2006)`: http://adsabs.harvard.edu/abs/2006MNRAS.371.1731T
 .. _`Chaplin et al. 2008`: http://adsabs.harvard.edu/abs/2008AN....329..549C
 .. _`Howe et al. (2015)`: http://adsabs.harvard.edu/abs/2015MNRAS.454.4120H
+.. _`Ball et al. (2018)`: https://arxiv.org/abs/1809.09108
 
 Documentation
 -------------
