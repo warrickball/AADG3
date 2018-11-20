@@ -36,7 +36,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinxfortran.fortran_domain',
               'sphinxfortran.fortran_autodoc']
-fortran_src = '../src/*.f90'
+fortran_src = ['../src/*.f90']
 fortran_ext = ["*.f90"]
 fortran_indent = 2
 
