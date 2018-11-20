@@ -13,7 +13,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Fortran APIs" href="fortran.html" />
@@ -29,6 +29,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="module-AADG3">
@@ -62,6 +64,34 @@ file, as returned by <code class="docutils literal notranslate"><span class="pre
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AADG3.generate_const_rot">
+<code class="descclassname">AADG3.</code><code class="descname">generate_const_rot</code><span class="sig-paren">(</span><em>modes</em>, <em>splitting=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#AADG3.generate_const_rot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create correctly-formatted data for rotational splittings with a
+constant value (which is by default zero).  Useful if you have
+mode data but not rotation data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>modes</strong> (<em>recarray</em>) – Structured array with mode frequency information from <code class="docutils literal notranslate"><span class="pre">modes</span></code>
+file, as returned by <code class="docutils literal notranslate"><span class="pre">load_modes</span></code>.</li>
+<li><strong>splitting</strong> (<em>float</em><em>, </em><em>optional</em>) – Constant rotational splitting in uHz. (default=0)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rot</strong> – Structured array with rotational splitting information in the
+same format as returned by <code class="docutils literal notranslate"><span class="pre">load_rot</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">recarray</p>
 </td>
 </tr>
 </tbody>
@@ -164,6 +194,7 @@ Python dict</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -178,7 +209,7 @@ Python dict</p>
 
 
 
-<h3><a href="index.html">Table Of Contents</a></h3>
+<h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="input.html">Input files and command-line arguments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fortran.html">Fortran APIs</a></li>
@@ -212,8 +243,8 @@ Python dict</p>
       &copy;2018, Warrick Ball, Bill Chaplin.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/python.rst.txt"
