@@ -465,7 +465,7 @@ contains
 
   subroutine show_version
 
-    write(*,*) 'AADG3 v3.0.0a'
+    write(*,*) 'AADG3 v3.0.1a'
 
   end subroutine show_version
   
