@@ -26,7 +26,7 @@ program AADG3
   integer, parameter :: ntype = 16
   integer :: nc(ntype), user_seed
   integer :: n_cadences, n_relax, n_fine
-  real(dp), allocatable :: vtotal(:)
+  real(dp), allocatable :: vtotal(:), v(:)
   real(dp) :: rho, tau, sig
   real(dp) :: inclination, cycle_period, cycle_phase, sdnu(ntype)
   real(dp) :: pcad, phicad, nsdsum, p(0:3), nuac
@@ -86,7 +86,9 @@ program AADG3
      stop 1
   endif
   
+  allocate(v(n_cadences))
   allocate(vtotal(n_cadences))
+  
   call random_number(vtotal)  ! warms up RNG
   vtotal = 0
   if (verbose) write(*,'(A)') 'Done.'
@@ -112,13 +114,18 @@ program AADG3
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
   if (verbose) write(*,'(3A8)') 'l', 'm', 'nc'
+  
+  !$OMP PARALLEL DO PRIVATE(v) REDUCTION(+:vtotal)
   do i = 1, ntype
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
      if (verbose) write(*,'(4I8,A4,I2)') l, m, nc(i), i, ' of ', ntype
      call overtones(nc(i), nsd(i), sdnu(i), &
-          fc(:,i), wc(:,i), pc(:,i), cs(:,i), vtotal)
+          fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
+     vtotal = vtotal + v
   end do
+  !$OMP END PARALLEL DO
+  
   if (verbose) write(*,'(A)') 'Finished computing oscillations.'
 
   ! Now output time series to disk:
@@ -133,6 +140,7 @@ program AADG3
   close(iounit)
   if (verbose) write(*,'(A)') 'Done.'
 
+  deallocate(v)
   deallocate(vtotal)
 
 contains
@@ -214,20 +222,19 @@ contains
   end subroutine get_modes
 
   
-  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vtotal)
+  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vout)
     
     use core, only: generate_kicks, laplace_solution
     
     integer, intent(in) :: ncomp
     real(dp), intent(in) :: nsdi, sdnui
     real(dp), intent(in), dimension(ncomp) :: freqs, widths, powers, Bshifts
-    real(dp), dimension(n_cadences), intent(inout) :: vtotal
+    real(dp), dimension(n_cadences), intent(out) :: vout
     
     integer :: j
     real(dp) :: damp0, freq0
     ! real(dp) :: nuac
     real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
-    real(dp), dimension(n_cadences) :: vtemp
     real(dp) :: dnu, dwid
 
     ckick = 0
@@ -251,12 +258,11 @@ contains
        kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
 
        call laplace_solution(n_cadences, n_relax, kickthis, freq0, damp0, &
-            powers(j), dnu, dwid, pcad, phicad, vtemp)
-       vtotal = vtotal + vtemp
+            powers(j), dnu, dwid, pcad, phicad, vout)
     end do
 
     if (add_granulation) then
-       vtotal = vtotal + ckick(n_relax+1:n_relax+n_cadences)
+       vout = vout + ckick(n_relax+1:n_relax+n_cadences)
     end if
 
     return
