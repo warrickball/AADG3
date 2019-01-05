@@ -111,11 +111,11 @@ program AADG3
 
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
-  if (verbose) write(*,'(3A8)') 'l', 'm', 'nc'
+  if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   do i = 1, ntype
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
-     if (verbose) write(*,'(4I8,A4,I2)') l, m, nc(i), i, ' of ', ntype
+     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
      call overtones(nc(i), nsd(i), sdnu(i), &
           fc(:,i), wc(:,i), pc(:,i), cs(:,i), vtotal)
   end do
@@ -345,7 +345,7 @@ contains
        else if (arg == '--modes_filename' .or. arg == '--modes-filename') then
           i = i + 1
           call getarg(i, modes_filename)
-       else if (arg == '--rotation-filename' .or. arg == '--rotation-filename') then
+       else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
           i = i + 1
           call getarg(i, rotation_filename)
        else if (arg == '--output_filename' .or. arg == '--output-filename') then
