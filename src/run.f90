@@ -139,7 +139,7 @@ contains
   
   subroutine get_modes
     use io, only: load_rotation, skip_comments
-    use math, only: get_Elm
+    use math, only: get_Elm, lm_to_k
     
     integer :: k, l, m, n
     real(dp) :: x, d1, d2, d3, d4
@@ -157,7 +157,7 @@ contains
     call get_Elm(inclination, 3, Elm)
     do l = 0, 3
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           pvis(k) = p(l)*Elm(l,abs(m))
        end do
     end do
@@ -186,7 +186,7 @@ contains
        end if
 
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           if ((pvis(k) > 1d-8) .and. (d3 > 1d-8)) then
              nc(k) = nc(k) + 1
              if (m == 0) then
