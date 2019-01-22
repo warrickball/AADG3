@@ -86,7 +86,6 @@ program AADG3
      stop 1
   endif
   
-  allocate(v(n_cadences))
   allocate(vtotal(n_cadences))
   
   call random_number(vtotal)  ! warms up RNG
@@ -117,12 +116,14 @@ program AADG3
   
   !$OMP PARALLEL DO PRIVATE(v) REDUCTION(+:vtotal)
   do i = 1, ntype
+     allocate(v(n_cadences))
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
      if (verbose) write(*,'(4I8,A4,I2)') l, m, nc(i), i, ' of ', ntype
      call overtones(nc(i), nsd(i), sdnu(i), &
           fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
      vtotal = vtotal + v
+     deallocate(v)
   end do
   !$OMP END PARALLEL DO
   
@@ -140,7 +141,6 @@ program AADG3
   close(iounit)
   if (verbose) write(*,'(A)') 'Done.'
 
-  deallocate(v)
   deallocate(vtotal)
 
 contains
