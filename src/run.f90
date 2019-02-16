@@ -113,6 +113,7 @@ program AADG3
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
   if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
+  
   !$OMP PARALLEL DO PRIVATE(v) REDUCTION(+:vtotal)
   do i = 1, ntype
      allocate(v(n_cadences))
