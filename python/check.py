@@ -30,7 +30,7 @@ nml, modes, rot = AADG3.load_all_input(args.filename)
 
 y0 = np.loadtxt(nml['output_filename'])
 t0 = np.arange(len(y0), dtype=float)*nml['cadence']
-y = y0.reshape((args.N, -1))
+y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
 t = t0[:len(y[0])]
 
 # f, p_tot = LS(t0, y0)
