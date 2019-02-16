@@ -112,14 +112,13 @@ program AADG3
 
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
-  if (verbose) write(*,'(3A8)') 'l', 'm', 'nc'
-  
+  if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   !$OMP PARALLEL DO PRIVATE(v) REDUCTION(+:vtotal)
   do i = 1, ntype
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
-     if (verbose) write(*,'(4I8,A4,I2)') l, m, nc(i), i, ' of ', ntype
+     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
      call overtones(nc(i), nsd(i), sdnu(i), &
           fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
      vtotal = vtotal + v
@@ -147,7 +146,7 @@ contains
   
   subroutine get_modes
     use io, only: load_rotation, skip_comments
-    use math, only: get_Elm
+    use math, only: get_Elm, lm_to_k
     
     integer :: k, l, m, n
     real(dp) :: x, d1, d2, d3, d4
@@ -165,7 +164,7 @@ contains
     call get_Elm(inclination, 3, Elm)
     do l = 0, 3
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           pvis(k) = p(l)*Elm(l,abs(m))
        end do
     end do
@@ -194,7 +193,7 @@ contains
        end if
 
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           if ((pvis(k) > 1d-8) .and. (d3 > 1d-8)) then
              nc(k) = nc(k) + 1
              if (m == 0) then
@@ -351,7 +350,7 @@ contains
        else if (arg == '--modes_filename' .or. arg == '--modes-filename') then
           i = i + 1
           call getarg(i, modes_filename)
-       else if (arg == '--rotation-filename' .or. arg == '--rotation-filename') then
+       else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
           i = i + 1
           call getarg(i, rotation_filename)
        else if (arg == '--output_filename' .or. arg == '--output-filename') then
