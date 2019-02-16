@@ -6,9 +6,16 @@ import AADG3
 from astropy.stats import LombScargle
 from argparse import ArgumentParser
 
-parser = ArgumentParser()
-parser.add_argument('-N', type=int, default=100,
-                    help="number of power spectra to average (default=100)")
+parser = ArgumentParser(description="""
+Reads an AADG3 input file and compares a (possibly averaged) power
+spectrum to the expected (though simplified) model power spectrum.
+The model power spectrum currently doesn't include mode asymmetry.
+""")
+parser.add_argument('filename', type=str,
+                    help="AADG3 input filename")
+parser.add_argument('-N', type=int, default=1,
+                    help="number of power spectra to average (default=1, "
+                    "i.e. no averaging)")
 args = parser.parse_args()
 
 def LS(t, y):
