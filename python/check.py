@@ -26,7 +26,7 @@ def LS(t, y):
     p = p*np.mean(y**2)/np.sum(p)/(f[1]-f[0])  # Bill's normalization
     return f, p
 
-nml, modes, rot = AADG3.load_all_input('basic.in')
+nml, modes, rot = AADG3.load_all_input(args.filename)
 
 y0 = np.loadtxt(nml['output_filename'])
 t0 = np.arange(len(y0), dtype=float)*nml['cadence']
