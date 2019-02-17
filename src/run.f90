@@ -114,7 +114,7 @@ program AADG3
   if (verbose) write(*,'(A)') 'Computing oscillations... '
   if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   
-  !$OMP PARALLEL DO PRIVATE(v) REDUCTION(+:vtotal)
+  !$OMP PARALLEL DO PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
   do i = 1, ntype
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
@@ -235,7 +235,11 @@ contains
     real(dp) :: damp0, freq0
     ! real(dp) :: nuac
     real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
+    real(dp), dimension(n_cadences) :: vi
     real(dp) :: dnu, dwid
+
+    vi = 0
+    vout = 0
 
     ckick = 0
     call generate_kicks(n_fine, cadence, tau, nsdi, ckick)
@@ -258,7 +262,8 @@ contains
        kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
 
        call laplace_solution(n_cadences, n_relax, kickthis, freq0, damp0, &
-            powers(j), dnu, dwid, pcad, phicad, vout)
+            powers(j), dnu, dwid, pcad, phicad, vi)
+       vout = vout + vi
     end do
 
     if (add_granulation) then
