@@ -16,6 +16,11 @@ parser.add_argument('filename', type=str,
 parser.add_argument('-N', type=int, default=1,
                     help="number of power spectra to average (default=1, "
                     "i.e. no averaging)")
+parser.add_argument('-o', '--output-files', type=str, nargs='+', default=None,
+                    help="use this timeseries file instead of the one in "
+                    "input file")
+parser.add_argument('--legend', action='store_true',
+                    help="add a legend, using filenames as keys")
 args = parser.parse_args()
 
 def LS(t, y):
@@ -28,22 +33,27 @@ def LS(t, y):
 
 nml, modes, rot = AADG3.load_all_input(args.filename)
 
-y0 = np.loadtxt(nml['output_filename'])
-t0 = np.arange(len(y0), dtype=float)*nml['cadence']
-y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
-t = t0[:len(y[0])]
+filenames = args.output_files if args.output_files else [nml['output_filename']]
 
-# f, p_tot = LS(t0, y0)
-# pl.loglog(f, p_tot)
+for filename in filenames:
+    y0 = np.loadtxt(filename)
+    t0 = np.arange(len(y0), dtype=float)*nml['cadence']
+    y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
+    t = t0[:len(y[0])]
 
-f, p_tot = LS(t, y[0])
+    f, p_tot = LS(t, y[0])
 
-for yi in y[1:]:
-    p_tot += LS(t, yi)[1]
+    for yi in y[1:]:
+        p_tot += LS(t, yi)[1]
 
-pl.loglog(f, p_tot/args.N)
+    pl.loglog(f, p_tot/args.N, label=filename)
+    
 ff = np.linspace(f[0], f[-1], 10000)
-pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot))
+pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot), label=args.filename)
+
+if args.legend:
+    pl.legend()
+    
 pl.show()
 
 # f0, p0 = LS(t0, y0)
