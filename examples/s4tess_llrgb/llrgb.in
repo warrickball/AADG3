@@ -3,7 +3,7 @@
 ! typical of the expected asteroseismic yield from TESS's
 ! short-cadence data.
 
-! Parameters from Ball et al. (in prep)
+! Parameters from Ball et al. (2018)
 
 &controls
     user_seed = 1728635
