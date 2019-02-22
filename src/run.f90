@@ -348,7 +348,7 @@ contains
        else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
           i = i + 1
           call getarg(i, rotation_filename)
-       else if (arg == '--output_filename' .or. arg == '--output-filename') then
+       else if (arg == '--output_filename' .or. arg == '--output-filename' .or. arg == '-o') then
           i = i + 1
           call getarg(i, output_filename)
        else
