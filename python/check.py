@@ -36,7 +36,11 @@ nml, modes, rot = AADG3.load_all_input(args.filename)
 filenames = args.output_files if args.output_files else [nml['output_filename']]
 
 for filename in filenames:
-    y0 = np.loadtxt(filename)
+    try:
+        y0 = np.loadtxt(nml['output_filename'])
+    except IOError:
+        y0 = np.loadtxt('/'.join(args.filename.split('/')[:-1] + [nml['output_filename']]))
+
     t0 = np.arange(len(y0), dtype=float)*nml['cadence']
     y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
     t = t0[:len(y[0])]
