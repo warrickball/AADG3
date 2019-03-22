@@ -46,6 +46,7 @@ program AADG3
        output_filename, output_fmt, verbose
 
   ! set some defaults for input file
+  user_seed = 0
   cycle_period = 1d6
   cycle_phase = 0d0
   nuac = 0
@@ -54,15 +55,20 @@ program AADG3
   sdnu = 0
   output_fmt = '(f16.7)'
   verbose = .false.
+
+  ! these defaults should force user to choose values
+  n_fine = -1
+  n_relax = -1
+  n_cadences = -1
   
   ierr = 0
 
   call parse_args
 
   if (verbose) then
-     write(*,*)
+     write(*,*) ''
      call show_version
-     write(*,*)
+     write(*,*) ''
   end if
   
   if (verbose) write(*,'(A)',advance='no') 'Checking command line arguments... '
@@ -82,6 +88,7 @@ program AADG3
      call random_seed(put=seed)
      deallocate(seed)
   else
+     if (verbose) write(*,*) ''
      write(*,*) 'ERROR in run.f90: user_seed must be >= 0'
      stop 1
   endif
@@ -134,6 +141,7 @@ program AADG3
   ierr = 0
   open(newunit=iounit, file=output_filename, status='replace', iostat=ierr)
   if (ierr /= 0) then
+     if (verbose) write(*,*) ''
      write(*,*) 'ERROR in AADG3 while opening ', output_filename
      stop
   end if
@@ -175,6 +183,7 @@ contains
     ierr = 0
     open(newunit=iounit, file=modes_filename, status='old', iostat=ierr)
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3.get_modes while opening ', modes_filename
        stop
     end if
@@ -189,6 +198,7 @@ contains
        
        read(iounit, *, iostat=ierr) l, n, d1, d2, d3, d4
        if (ierr /= 0) then
+          if (verbose) write(*,*) ''
           write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading ', modes_filename
           exit
        end if
@@ -211,6 +221,7 @@ contains
     end do
 
     if (ierr > 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3.get_modes while reading ', modes_filename
        stop
     end if
@@ -297,6 +308,7 @@ contains
     open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
     
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3 while opening ', input_filename
        stop 1
     end if
@@ -305,6 +317,7 @@ contains
     close(iounit)
     
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3 while reading ', input_filename
        write(*,*) 'the following runtime error may be informative'
        open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
@@ -363,6 +376,7 @@ contains
           i = i + 1
           call getarg(i, output_filename)
        else
+          if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
           write(*,*) 'argument ', trim(arg), ' is not valid'
           stop 1
@@ -385,6 +399,7 @@ contains
     call getarg(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in get_int_arg: could not parse string ', arg, 'as integer'
        stop 1
     end if
@@ -402,6 +417,7 @@ contains
     call getarg(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in get_real_arg: could not parse string ', arg, 'as real(dp)'
        stop 1
     end if
@@ -412,39 +428,61 @@ contains
   subroutine check_args
     
     if (inclination < 0 .or. inclination > 90) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: inclination must be between 0 and 90 degrees'
        write(*,*) 'but got ', inclination
        stop 1
     end if
 
     if (rho < 0 .or. rho > 1) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: rho must be between 0 and 1'
        write(*,*) 'but got ', rho
        stop 1
     end if
 
-    call check_positive('sig', sig)
-    call check_positive('rho', rho)
-    call check_positive('tau', tau)
-    call check_positive('cycle_period', cycle_period)
-    call check_positive('cycle_phase', cycle_phase)
+    call check_positive_float('sig', sig)
+    call check_positive_float('rho', rho)
+    call check_positive_float('tau', tau)
+    call check_positive_float('cycle_period', cycle_period)
+    call check_positive_float('cycle_phase', cycle_phase)
+    
+    call check_positive_int('n_fine', n_fine)
+    call check_positive_int('n_relax', n_relax)
+    call check_positive_int('n_cadences', n_cadences)
     
   end subroutine check_args
 
 
-  subroutine check_positive(name, val)
+  subroutine check_positive_float(name, val)
     
     character(*) :: name
     real(dp) :: val
 
     if (val < 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: ', name, ' must be positive'
        write(*,*) 'but got ', val
        stop 1
     end if
     
-  end subroutine check_positive
+  end subroutine check_positive_float
 
+
+  subroutine check_positive_int(name, val)
+    
+    character(*) :: name
+    integer :: val
+
+    if (val < 0) then
+       if (verbose) write(*,*) ''
+       write(*,*) 'ERROR: ', name, ' must be positive'
+       write(*,*) 'but got ', val
+       stop 1
+    end if
+    
+  end subroutine check_positive_int
+  
   
   subroutine show_help
 
