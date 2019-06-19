@@ -121,7 +121,7 @@ program AADG3
   if (verbose) write(*,'(A)') 'Computing oscillations... '
   if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   
-  !$OMP PARALLEL DO PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
+  !$OMP PARALLEL DO SCHEDULE(dynamic) PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
   do i = 1, ntype
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
