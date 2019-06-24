@@ -28,7 +28,7 @@ def LS(t, y):
                                        nyquist_factor=1,
                                        samples_per_peak=1)
     f = f*1e6  # to uHz
-    p = p*np.mean(y**2)/np.sum(p)/(f[1]-f[0])  # Bill's normalization
+    p = p*np.var(y)/np.trapz(p, x=f)  # Bill's normalization
     return f, p
 
 nml, modes, rot = AADG3.load_all_input(args.filename)
