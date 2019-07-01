@@ -39,7 +39,7 @@ for filename in filenames:
     try:
         y0 = np.loadtxt(filename)
     except IOError:
-        y0 = np.loadtxt('/'.join(args.filename.split('/')[:-1] + filename))
+        y0 = np.loadtxt('/'.join(args.filename.split('/')[:-1] + [filename]))
 
     t0 = np.arange(len(y0), dtype=float)*nml['cadence']
     y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
