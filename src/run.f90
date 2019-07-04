@@ -489,6 +489,7 @@ contains
     write(*,*)
     write(*,*) "asteroFLAG Artificial Dataset Generator 3 (AADG3)"
     write(*,*) "Copyright 2018 Warrick Ball & Bill Chaplin"
+    write(*,*) "https://warrickball.github.io/AADG3"
     write(*,*)
     call show_usage
     write(*,*)
