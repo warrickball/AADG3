@@ -1,4 +1,4 @@
-! Copyright 2018 Warrick Ball & Bill Chaplin
+! Copyright 2018-2019 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -515,7 +515,7 @@ contains
 
   subroutine show_version
 
-    write(*,*) 'AADG3 v3.0.1a'
+    write(*,*) 'AADG3 v3.0.1'
 
   end subroutine show_version
   
