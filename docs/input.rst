@@ -179,7 +179,7 @@ above can be overridden on the command line by invoking AADG3 with
     AADG3 controls.in --option value
 
 For example, if you wanted to run the timeseries for 40000 cadences
-instead of the number the input file, you could use
+instead of the number in the input file, you could use
 
 ::
    
@@ -205,9 +205,13 @@ will set ``add_granulation`` to true, whereas
 
    AADG3 controls.in --no-add-granulation
 
-will set ``add_granulation`` to false.  The ``verbose`` option is a
-special case.  It can be set and unset as above but, in addition, it
-can be set with ``-v`` and unset with ``--quiet`` or ``-q``.
+will set ``add_granulation`` to false.
+
+The ``verbose`` option is a special case.  It can be set and unset as
+above but, in addition, it can be set with ``-v`` and unset with
+``--quiet`` or ``-q``.
+
+The alias ``-o`` can be used as a shorthand for ``--output-file``.
     
 Failure to parse a genuine option is a bug and should be reported.
 

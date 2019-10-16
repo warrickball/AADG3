@@ -24,19 +24,20 @@ subsequent *Asteroseismic Fitting at Low Angular Degree* (asteroFLAG,
 e.g. `Chaplin et al. 2008`_) consortia.
 
 This version is derived from code delivered as version 2, which we
-incremented to the present version.  We publicly released the code as
-part of Ball et al. (in prep.), in which we also presented a large
+incremented to the present version.  We publicly released version 3.0 as
+part of `Ball et al. (2018)`_, in which we also presented a large
 catalogue of mock TESS targets for which we generated data using
 AADG3.
 
 Please cite these papers appropriately if you use AADG3 in your
 research.
 
-.. _`Chaplin et al. (1997)`: http://adsabs.harvard.edu/abs/1997MNRAS.287...51C
-.. _`Chaplin et al. 2006`: http://adsabs.harvard.edu/abs/2006MNRAS.369..985C
-.. _`Toutain et al. (2006)`: http://adsabs.harvard.edu/abs/2006MNRAS.371.1731T
-.. _`Chaplin et al. 2008`: http://adsabs.harvard.edu/abs/2008AN....329..549C
-.. _`Howe et al. (2015)`: http://adsabs.harvard.edu/abs/2015MNRAS.454.4120H
+.. _`Chaplin et al. (1997)`: https://ui.adsabs.harvard.edu/abs/1997MNRAS.287...51C/abstract
+.. _`Chaplin et al. 2006`: https://ui.adsabs.harvard.edu/abs/2006MNRAS.369..985C/abstract
+.. _`Toutain et al. (2006)`: https://ui.adsabs.harvard.edu/abs/2006MNRAS.371.1731T/abstract
+.. _`Chaplin et al. 2008`: https://ui.adsabs.harvard.edu/abs/2008AN....329..549C/abstract
+.. _`Howe et al. (2015)`: https://ui.adsabs.harvard.edu/abs/2015MNRAS.454.4120H/abstract
+.. _`Ball et al. (2018)`: https://ui.adsabs.harvard.edu/abs/2018ApJS..239...34B/abstract
 
 Download
 ++++++++
@@ -45,8 +46,8 @@ AADG3 is hosted on `GitHub <https://github.com/warrickball/AADG3>`_, where you c
 `list of release versions <https://github.com/warrickball/AADG3/releases>`_ or fork/clone
 the repo.  For convenience, from here you can download archives of the
 
-* most recent release, **v3.0.0a** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.0a.tar.gz>`__,
-  `zip <https://github.com/warrickball/AADG3/archive/v3.0.0a.tar.gz>`__),
+* most recent release, **v3.0.1** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.1.tar.gz>`__,
+  `zip <https://github.com/warrickball/AADG3/archive/v3.0.1.zip>`__),
   
 * current stable branch (`tarball <https://github.com/warrickball/AADG3/archive/stable.tar.gz>`__, 
   `zip <https://github.com/warrickball/AADG3/archive/stable.zip>`__), and
@@ -94,6 +95,10 @@ The standalone executable file is placed in ``bin/AADG3``.  You can
 run it from anywhere on your system or add it to your ``$PATH``
 environment variable.  I personally add a symbolic link to my
 ``~/.local/bin`` folder, which is in my ``$PATH``.
+
+As of v3.0.1, AADG3 is parallelised using OpenMP.  You can control the
+number of threads that AADG3 uses through the ``$OMP_NUM_THREADS``
+environment variable.
 
 You can run some basic tests using ``bin/test_AADG3``.  Please let me
 know if any failures are reported.

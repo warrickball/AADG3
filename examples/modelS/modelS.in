@@ -1,0 +1,23 @@
+! An example input file for AADG3.  This input produces 30d of data
+! for Model S.  Frequencies were computed using the test case input in
+! GYRE 5.2.  Linewidths and amplitudes were computed using the code in
+! Ball et al. (2018) and a constant rotation rate of 0.4 uHz.
+
+&controls
+    user_seed = 225618852
+    cadence = 60d0
+    n_cadences = 43200
+    sig = 60d0
+    rho = 0.45d0
+    tau = 250d0
+    n_relax = 8640
+    n_fine = 50
+    inclination = 90d0
+    p(1) = 1.505d0
+    p(2) = 0.62d0
+    p(3) = 0.075d0
+    add_granulation = .true.
+    modes_filename = 'modelS.con'
+    rotation_filename = 'modelS.rot'
+    output_filename = 'modelS.asc'
+/

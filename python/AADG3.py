@@ -34,7 +34,7 @@ def PS_model(f, nml, modes, rot):
     from math import factorial
     from scipy.special import lpmn
 
-    x = np.cos(nml['inclination']/180.0*np.pi)
+    x = np.cos(np.radians(nml['inclination']))
     lmax = max(modes['l'])
     E = np.array(lpmn(lmax, lmax, x)[0].T)
     for l in range(lmax+1):
@@ -43,7 +43,13 @@ def PS_model(f, nml, modes, rot):
     
     # De Ridder et al., MNRAS 365, 595 (2006), eq. (19)
     # /2 because AADG works in rms amplitude and /1e6 for ppm^2/uHz
-    bkg = 4.*nml['sig']**2*nml['tau']/(1.0+(1e-6*f*nml['tau']*2.*np.pi)**2)/2e6
+    # note the sinc function for apodisation (np.sinc(x) = sin(pi*x)/(pi*x))
+    # and reflection of super-Nyquist part of background
+    f6 = f/1e6
+    bkg = 1/(1 + (f6*nml['tau']*2.*np.pi)**2)*np.sinc(nml['cadence']*f6)**2
+    f6 = (f[::-1] + f[-1])/1e6
+    bkg += 1/(1 + (f6*nml['tau']*2.*np.pi)**2)*np.sinc(nml['cadence']*f6)**2
+    bkg *= 4.*nml['sig']**2*nml['tau']/2e6
 
     def lorentz(nu, nu0, w):
         return 1./(1.+4.*(nu-nu0)**2/w**2)
@@ -194,6 +200,39 @@ def load_rot(filename):
     """
     return np.loadtxt(filename, dtype=rot_dtype, comments=['#', '!'])
 
+
+def generate_const_rot(modes, splitting=0.0):
+    """Create correctly-formatted data for rotational splittings with a
+    constant value (which is by default zero).  Useful if you have
+    mode data but not rotation data.
+
+    Parameters
+    ----------
+    modes: recarray
+        Structured array with mode frequency information from ``modes``
+        file, as returned by ``load_modes``.
+    splitting: float, optional
+        Constant rotational splitting in uHz. (default=0)
+    
+    Returns
+    -------
+    rot: recarray
+        Structured array with rotational splitting information in the
+        same format as returned by ``load_rot``.
+
+    """
+    rot = np.zeros(sum(modes['l']), dtype=rot_dtype)
+    rot['splitting'] = splitting
+    i = 0
+    for row in modes:
+        for m in range(1, row['l']+1):
+            rot['n'][i] = row['n']
+            rot['l'][i] = row['l']
+            rot['m'][i] = m
+            i += 1
+            
+    return rot
+    
 
 def save_namelist(filename, nml):
     """Saves the Fortran namelist in Python dict ``nml`` to a file named

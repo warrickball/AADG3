@@ -1,4 +1,4 @@
-! Copyright 2018 Warrick Ball & Bill Chaplin
+! Copyright 2018-2019 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -26,7 +26,7 @@ program AADG3
   integer, parameter :: ntype = 16
   integer :: nc(ntype), user_seed
   integer :: n_cadences, n_relax, n_fine
-  real(dp), allocatable :: vtotal(:)
+  real(dp), allocatable :: vtotal(:), v(:)
   real(dp) :: rho, tau, sig
   real(dp) :: inclination, cycle_period, cycle_phase, sdnu(ntype)
   real(dp) :: pcad, phicad, nsdsum, p(0:3), nuac
@@ -46,6 +46,7 @@ program AADG3
        output_filename, output_fmt, verbose
 
   ! set some defaults for input file
+  user_seed = 0
   cycle_period = 1d6
   cycle_phase = 0d0
   nuac = 0
@@ -54,15 +55,20 @@ program AADG3
   sdnu = 0
   output_fmt = '(f16.7)'
   verbose = .false.
+
+  ! these defaults should force user to choose values
+  n_fine = -1
+  n_relax = -1
+  n_cadences = -1
   
   ierr = 0
 
   call parse_args
 
   if (verbose) then
-     write(*,*)
+     write(*,*) ''
      call show_version
-     write(*,*)
+     write(*,*) ''
   end if
   
   if (verbose) write(*,'(A)',advance='no') 'Checking command line arguments... '
@@ -82,11 +88,13 @@ program AADG3
      call random_seed(put=seed)
      deallocate(seed)
   else
+     if (verbose) write(*,*) ''
      write(*,*) 'ERROR in run.f90: user_seed must be >= 0'
      stop 1
   endif
   
   allocate(vtotal(n_cadences))
+  
   call random_number(vtotal)  ! warms up RNG
   vtotal = 0
   if (verbose) write(*,'(A)') 'Done.'
@@ -111,14 +119,21 @@ program AADG3
 
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
-  if (verbose) write(*,'(3A8)') 'l', 'm', 'nc'
+  if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
+  
+  !$OMP PARALLEL DO SCHEDULE(dynamic) PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
   do i = 1, ntype
+     allocate(v(n_cadences))
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
-     if (verbose) write(*,'(4I8,A4,I2)') l, m, nc(i), i, ' of ', ntype
+     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
      call overtones(nc(i), nsd(i), sdnu(i), &
-          fc(:,i), wc(:,i), pc(:,i), cs(:,i), vtotal)
+          fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
+     vtotal = vtotal + v
+     deallocate(v)
   end do
+  !$OMP END PARALLEL DO
+  
   if (verbose) write(*,'(A)') 'Finished computing oscillations.'
 
   ! Now output time series to disk:
@@ -126,6 +141,7 @@ program AADG3
   ierr = 0
   open(newunit=iounit, file=output_filename, status='replace', iostat=ierr)
   if (ierr /= 0) then
+     if (verbose) write(*,*) ''
      write(*,*) 'ERROR in AADG3 while opening ', output_filename
      stop
   end if
@@ -139,7 +155,7 @@ contains
   
   subroutine get_modes
     use io, only: load_rotation, skip_comments
-    use math, only: get_Elm
+    use math, only: get_Elm, lm_to_k
     
     integer :: k, l, m, n
     real(dp) :: x, d1, d2, d3, d4
@@ -157,7 +173,7 @@ contains
     call get_Elm(inclination, 3, Elm)
     do l = 0, 3
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           pvis(k) = p(l)*Elm(l,abs(m))
        end do
     end do
@@ -167,6 +183,7 @@ contains
     ierr = 0
     open(newunit=iounit, file=modes_filename, status='old', iostat=ierr)
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3.get_modes while opening ', modes_filename
        stop
     end if
@@ -181,12 +198,13 @@ contains
        
        read(iounit, *, iostat=ierr) l, n, d1, d2, d3, d4
        if (ierr /= 0) then
+          if (verbose) write(*,*) ''
           write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading ', modes_filename
           exit
        end if
 
        do m = -l, l
-          k = l*(l+1) + m + 1
+          call lm_to_k(l, m, k)
           if ((pvis(k) > 1d-8) .and. (d3 > 1d-8)) then
              nc(k) = nc(k) + 1
              if (m == 0) then
@@ -203,6 +221,7 @@ contains
     end do
 
     if (ierr > 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3.get_modes while reading ', modes_filename
        stop
     end if
@@ -214,21 +233,24 @@ contains
   end subroutine get_modes
 
   
-  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vtotal)
+  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vout)
     
     use core, only: generate_kicks, laplace_solution
     
     integer, intent(in) :: ncomp
     real(dp), intent(in) :: nsdi, sdnui
     real(dp), intent(in), dimension(ncomp) :: freqs, widths, powers, Bshifts
-    real(dp), dimension(n_cadences), intent(inout) :: vtotal
+    real(dp), dimension(n_cadences), intent(out) :: vout
     
     integer :: j
     real(dp) :: damp0, freq0
     ! real(dp) :: nuac
     real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
-    real(dp), dimension(n_cadences) :: vtemp
+    real(dp), dimension(n_cadences) :: vi
     real(dp) :: dnu, dwid
+
+    vi = 0
+    vout = 0
 
     ckick = 0
     call generate_kicks(n_fine, cadence, tau, nsdi, ckick)
@@ -251,12 +273,12 @@ contains
        kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
 
        call laplace_solution(n_cadences, n_relax, kickthis, freq0, damp0, &
-            powers(j), dnu, dwid, pcad, phicad, vtemp)
-       vtotal = vtotal + vtemp
+            powers(j), dnu, dwid, pcad, phicad, vi)
+       vout = vout + vi
     end do
 
     if (add_granulation) then
-       vtotal = vtotal + ckick(n_relax+1:n_relax+n_cadences)
+       vout = vout + ckick(n_relax+1:n_relax+n_cadences)
     end if
 
     return
@@ -286,6 +308,7 @@ contains
     open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
     
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3 while opening ', input_filename
        stop 1
     end if
@@ -294,6 +317,7 @@ contains
     close(iounit)
     
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in AADG3 while reading ', input_filename
        write(*,*) 'the following runtime error may be informative'
        open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
@@ -345,13 +369,14 @@ contains
        else if (arg == '--modes_filename' .or. arg == '--modes-filename') then
           i = i + 1
           call getarg(i, modes_filename)
-       else if (arg == '--rotation-filename' .or. arg == '--rotation-filename') then
+       else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
           i = i + 1
           call getarg(i, rotation_filename)
-       else if (arg == '--output_filename' .or. arg == '--output-filename') then
+       else if (arg == '--output_filename' .or. arg == '--output-filename' .or. arg == '-o') then
           i = i + 1
           call getarg(i, output_filename)
        else
+          if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
           write(*,*) 'argument ', trim(arg), ' is not valid'
           stop 1
@@ -374,6 +399,7 @@ contains
     call getarg(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in get_int_arg: could not parse string ', arg, 'as integer'
        stop 1
     end if
@@ -391,6 +417,7 @@ contains
     call getarg(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR in get_real_arg: could not parse string ', arg, 'as real(dp)'
        stop 1
     end if
@@ -401,45 +428,68 @@ contains
   subroutine check_args
     
     if (inclination < 0 .or. inclination > 90) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: inclination must be between 0 and 90 degrees'
        write(*,*) 'but got ', inclination
        stop 1
     end if
 
     if (rho < 0 .or. rho > 1) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: rho must be between 0 and 1'
        write(*,*) 'but got ', rho
        stop 1
     end if
 
-    call check_positive('sig', sig)
-    call check_positive('rho', rho)
-    call check_positive('tau', tau)
-    call check_positive('cycle_period', cycle_period)
-    call check_positive('cycle_phase', cycle_phase)
+    call check_positive_float('sig', sig)
+    call check_positive_float('rho', rho)
+    call check_positive_float('tau', tau)
+    call check_positive_float('cycle_period', cycle_period)
+    call check_positive_float('cycle_phase', cycle_phase)
+    
+    call check_positive_int('n_fine', n_fine)
+    call check_positive_int('n_relax', n_relax)
+    call check_positive_int('n_cadences', n_cadences)
     
   end subroutine check_args
 
 
-  subroutine check_positive(name, val)
+  subroutine check_positive_float(name, val)
     
     character(*) :: name
     real(dp) :: val
 
     if (val < 0) then
+       if (verbose) write(*,*) ''
        write(*,*) 'ERROR: ', name, ' must be positive'
        write(*,*) 'but got ', val
        stop 1
     end if
     
-  end subroutine check_positive
+  end subroutine check_positive_float
 
+
+  subroutine check_positive_int(name, val)
+    
+    character(*) :: name
+    integer :: val
+
+    if (val < 0) then
+       if (verbose) write(*,*) ''
+       write(*,*) 'ERROR: ', name, ' must be positive'
+       write(*,*) 'but got ', val
+       stop 1
+    end if
+    
+  end subroutine check_positive_int
+  
   
   subroutine show_help
 
     write(*,*)
     write(*,*) "asteroFLAG Artificial Dataset Generator 3 (AADG3)"
     write(*,*) "Copyright 2018 Warrick Ball & Bill Chaplin"
+    write(*,*) "https://warrickball.github.io/AADG3"
     write(*,*)
     call show_usage
     write(*,*)
@@ -465,7 +515,7 @@ contains
 
   subroutine show_version
 
-    write(*,*) 'AADG3 v3.0.0a'
+    write(*,*) 'AADG3 v3.0.1'
 
   end subroutine show_version
   

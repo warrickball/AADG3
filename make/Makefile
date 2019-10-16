@@ -1,5 +1,5 @@
 FC = gfortran
-FFLAGS = -O3 -fbounds-check -fbacktrace -ffpe-trap=zero,overflow -Wconversion -Wall -fcheck=all -g -ggdb
+FFLAGS = -O3 -fopenmp -fbounds-check -fbacktrace -ffpe-trap=zero,overflow -Wconversion -Wall -fcheck=all -g -ggdb
 
 OBJ_DIR = ../obj
 SRC_DIR = ../src
