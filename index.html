@@ -6,14 +6,15 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>The AsteroFLAG Artificial Dataset Generator 3 (AADG3) &#8212; AADG3 3.0.0 documentation</title>
+    <title>The AsteroFLAG Artificial Dataset Generator 3 (AADG3) &#8212; AADG3 3.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Input files and command-line arguments" href="input.html" />
@@ -38,20 +39,20 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>AADG3 simulates lightcurves of solar-like oscillators.  It is based on
-a series of programs derived from the original work by <a class="reference external" href="http://adsabs.harvard.edu/abs/1997MNRAS.287...51C">Chaplin et
+a series of programs derived from the original work by <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1997MNRAS.287...51C/abstract">Chaplin et
 al. (1997)</a>, which describes the method of generating the
 oscillations using the Laplace transform solution of a damped harmonic
 oscillator.  The use of a correlated excitation component to produce
-mode asymmetry was introduced by <a class="reference external" href="http://adsabs.harvard.edu/abs/2006MNRAS.371.1731T">Toutain et al. (2006)</a>.  Most
-recently, <a class="reference external" href="http://adsabs.harvard.edu/abs/2015MNRAS.454.4120H">Howe et al. (2015)</a> gave a detailed description of the
+mode asymmetry was introduced by <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2006MNRAS.371.1731T/abstract">Toutain et al. (2006)</a>.  Most
+recently, <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2015MNRAS.454.4120H/abstract">Howe et al. (2015)</a> gave a detailed description of the
 code’s methods as part of their validation of BiSON results.</p>
 <p>Variants of the code have been used by the <em>Solar Fitting at Low
-Angular Degree</em> (solarFLAG, e.g. <a class="reference external" href="http://adsabs.harvard.edu/abs/2006MNRAS.369..985C">Chaplin et al. 2006</a>) and
+Angular Degree</em> (solarFLAG, e.g. <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2006MNRAS.369..985C/abstract">Chaplin et al. 2006</a>) and
 subsequent <em>Asteroseismic Fitting at Low Angular Degree</em> (asteroFLAG,
-e.g. <a class="reference external" href="http://adsabs.harvard.edu/abs/2008AN....329..549C">Chaplin et al. 2008</a>) consortia.</p>
+e.g. <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2008AN....329..549C/abstract">Chaplin et al. 2008</a>) consortia.</p>
 <p>This version is derived from code delivered as version 2, which we
-incremented to the present version.  We publicly released the code as
-part of <a class="reference external" href="https://arxiv.org/abs/1809.09108">Ball et al. (2018)</a>, in which we also presented a large
+incremented to the present version.  We publicly released version 3.0 as
+part of <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJS..239...34B/abstract">Ball et al. (2018)</a>, in which we also presented a large
 catalogue of mock TESS targets for which we generated data using
 AADG3.</p>
 <p>Please cite these papers appropriately if you use AADG3 in your
@@ -63,8 +64,8 @@ research.</p>
 <a class="reference external" href="https://github.com/warrickball/AADG3/releases">list of release versions</a> or fork/clone
 the repo.  For convenience, from here you can download archives of the</p>
 <ul class="simple">
-<li>most recent release, <strong>v3.0.0</strong> (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.0.tar.gz">tarball</a>,
-<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.0.zip">zip</a>),</li>
+<li>most recent release, <strong>v3.0.1</strong> (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.1.tar.gz">tarball</a>,
+<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.1.zip">zip</a>),</li>
 <li>current stable branch (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.tar.gz">tarball</a>,
 <a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.zip">zip</a>), and</li>
 <li>current development version (master branch, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.tar.gz">tarball</a>, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.zip">zip</a>)</li>
@@ -103,6 +104,9 @@ timeseries each time.</p>
 run it from anywhere on your system or add it to your <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>
 environment variable.  I personally add a symbolic link to my
 <code class="docutils literal notranslate"><span class="pre">~/.local/bin</span></code> folder, which is in my <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>.</p>
+<p>As of v3.0.1, AADG3 is parallelised using OpenMP.  You can control the
+number of threads that AADG3 uses through the <code class="docutils literal notranslate"><span class="pre">$OMP_NUM_THREADS</span></code>
+environment variable.</p>
 <p>You can run some basic tests using <code class="docutils literal notranslate"><span class="pre">bin/test_AADG3</span></code>.  Please let me
 know if any failures are reported.</p>
 <p>To get started, a few examples are provided in <code class="docutils literal notranslate"><span class="pre">examples/</span></code>.
@@ -203,8 +207,8 @@ please read the <a class="reference external" href="python.html">API documentati
       &copy;2018, Warrick Ball, Bill Chaplin.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/index.rst.txt"

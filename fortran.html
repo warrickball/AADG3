@@ -6,14 +6,15 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Fortran APIs &#8212; AADG3 3.0.0 documentation</title>
+    <title>Fortran APIs &#8212; AADG3 3.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Python module API" href="python.html" />
@@ -47,7 +48,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Use :</th><td class="field-body"><a class="reference internal" href="#f/types" title="f/types: A simple module defining common type definitions for the rest of AADG3.  Currently only defines the double precision type ``dp``."><code class="xref f f-mod docutils literal notranslate"><span class="pre">types</span></code></a> (<a class="reference internal" href="#f/types/dp" title="f/types/dp"><code class="xref f f-func docutils literal notranslate"><span class="pre">dp()</span></code></a>), <a class="reference internal" href="#f/math" title="f/math: Various mathematical constants and functions."><code class="xref f f-mod docutils literal notranslate"><span class="pre">math</span></code></a> (<a class="reference internal" href="#f/math/pi" title="f/math/pi"><code class="xref f f-func docutils literal notranslate"><span class="pre">pi()</span></code></a>, <a class="reference internal" href="#f/math/twopi" title="f/math/twopi"><code class="xref f f-func docutils literal notranslate"><span class="pre">twopi()</span></code></a>, <a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a>)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a>, <a class="reference internal" href="#f/math/get_elm" title="f/math/get_elm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_elm()</span></code></a>, <a class="reference internal" href="#f/io/load_rotation" title="f/io/load_rotation"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_rotation()</span></code></a>, <a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a>, <a class="reference internal" href="#f/core/generate_kicks" title="f/core/generate_kicks"><code class="xref f f-func docutils literal notranslate"><span class="pre">generate_kicks()</span></code></a>, <a class="reference internal" href="#f/core/laplace_solution" title="f/core/laplace_solution"><code class="xref f f-func docutils literal notranslate"><span class="pre">laplace_solution()</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Call to:</th><td class="field-body"><a class="reference internal" href="#f/math/k_to_lm" title="f/math/k_to_lm"><code class="xref f f-func docutils literal notranslate"><span class="pre">k_to_lm()</span></code></a>, <a class="reference internal" href="#f/math/get_elm" title="f/math/get_elm"><code class="xref f f-func docutils literal notranslate"><span class="pre">get_elm()</span></code></a>, <a class="reference internal" href="#f/math/lm_to_k" title="f/math/lm_to_k"><code class="xref f f-func docutils literal notranslate"><span class="pre">lm_to_k()</span></code></a>, <a class="reference internal" href="#f/io/load_rotation" title="f/io/load_rotation"><code class="xref f f-func docutils literal notranslate"><span class="pre">load_rotation()</span></code></a>, <a class="reference internal" href="#f/io/skip_comments" title="f/io/skip_comments"><code class="xref f f-func docutils literal notranslate"><span class="pre">skip_comments()</span></code></a>, <a class="reference internal" href="#f/core/generate_kicks" title="f/core/generate_kicks"><code class="xref f f-func docutils literal notranslate"><span class="pre">generate_kicks()</span></code></a>, <a class="reference internal" href="#f/core/laplace_solution" title="f/core/laplace_solution"><code class="xref f f-func docutils literal notranslate"><span class="pre">laplace_solution()</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -238,7 +239,7 @@ over sequences of angular degrees and azimuthal orders,</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
+<tr class="field-even field"><th class="field-name">Called from:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#f/aadg3" title="f/aadg3"><code class="xref f f-prog docutils literal notranslate"><span class="pre">aadg3</span></code></a>, <code class="xref f f-prog docutils literal notranslate"><span class="pre">test_aadg3</span></code></p>
 </td>
 </tr>
 </tbody>
@@ -543,8 +544,8 @@ AADG3.  Currently only defines the double precision type <code class="docutils l
       &copy;2018, Warrick Ball, Bill Chaplin.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/fortran.rst.txt"
