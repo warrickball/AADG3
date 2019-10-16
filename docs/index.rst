@@ -24,7 +24,7 @@ subsequent *Asteroseismic Fitting at Low Angular Degree* (asteroFLAG,
 e.g. `Chaplin et al. 2008`_) consortia.
 
 This version is derived from code delivered as version 2, which we
-incremented to the present version.  We publicly released the code as
+incremented to the present version.  We publicly released version 3.0 as
 part of `Ball et al. (2018)`_, in which we also presented a large
 catalogue of mock TESS targets for which we generated data using
 AADG3.
@@ -95,6 +95,10 @@ The standalone executable file is placed in ``bin/AADG3``.  You can
 run it from anywhere on your system or add it to your ``$PATH``
 environment variable.  I personally add a symbolic link to my
 ``~/.local/bin`` folder, which is in my ``$PATH``.
+
+As of v3.0.1, AADG3 is parallelised using OpenMP.  You can control the
+number of threads that AADG3 uses through the ``$OMP_NUM_THREADS``
+environment variable.
 
 You can run some basic tests using ``bin/test_AADG3``.  Please let me
 know if any failures are reported.
