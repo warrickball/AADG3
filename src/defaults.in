@@ -1,0 +1,38 @@
+  ! default parameters that should be provided by the &controls
+  ! namelist
+
+  ! many of these have values that will cause an error so that the
+  ! user is forced to choose something
+
+  ! more detailed descriptions are given in the documentation
+  ! https://warrickball.github.io/AADG3/input.html
+  
+  user_seed = 0            ! random seed for reproducibility
+  n_fine = 50              ! number of subcadences into which each
+                           ! cadences is divided during the
+                           ! calculation
+  n_relax = -1             ! number of cadences used to get the
+                           ! oscillations going, which are discarded
+  n_cadences = -1          ! number of cadences for the output
+                           ! timeseries
+  cadence = -1d0           ! cadence of the observations, in seconds
+  sig = -1d0               ! rms amplitude of granuation, in same
+                           ! units as mode powers in `modes_filename`
+  rho = -1d0               ! correlation coefficient of the driving,
+                           ! between 0 and 1.  0 => modes are
+                           ! completely uncorrelated with driving and
+                           ! therefore symmetric
+  tau = -1d0               ! granulation timescale, in seconds
+  inclination = 0d0        ! inclination angle
+  cycle_period = 1d99      ! magnetic cycle period, in years
+  cycle_phase = 0d0        ! initial magnetic cycle phase, in years
+  nuac = 0d0               ! relic of activity calculation, unused
+  sdnu = 0d0               ! relic of activity calculation, unused
+  p = [1, 0, 0, 0]         ! visibility ratios for each l
+  add_granulation = .true.
+  modes_filename = ''
+  rotation_filename = ''
+  output_filename = ''
+  output_fmt = '(f16.7)'   ! format statement for output timeseries
+  verbose = .false.        ! display some information while code is
+                           ! running

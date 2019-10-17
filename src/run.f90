@@ -46,21 +46,7 @@ program AADG3
        add_granulation, modes_filename, rotation_filename, &
        output_filename, output_fmt, verbose
 
-  ! set some defaults for input file
-  user_seed = 0
-  cycle_period = 1d6
-  cycle_phase = 0d0
-  nuac = 0
-  p = 0
-  p(0) = 1
-  sdnu = 0
-  output_fmt = '(f16.7)'
-  verbose = .false.
-
-  ! these defaults should force user to choose values
-  n_fine = -1
-  n_relax = -1
-  n_cadences = -1
+  include 'defaults.in'
   
   ierr = 0
 
@@ -441,8 +427,8 @@ contains
        stop 1
     end if
 
+    call check_positive_float('cadence', cadence)
     call check_positive_float('sig', sig)
-    call check_positive_float('rho', rho)
     call check_positive_float('tau', tau)
     call check_positive_float('cycle_period', cycle_period)
     call check_positive_float('cycle_phase', cycle_phase)
