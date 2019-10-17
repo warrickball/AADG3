@@ -60,17 +60,18 @@ contains
   end subroutine generate_kicks
 
 
-  subroutine laplace_solution(n_cadences, n_relax, kick, freq0, damp0, &
-       power, dnu, dwid, pcad, phicad, vout)
+  subroutine laplace_solution(n_cadences, n_relax, kick, m, &
+       pcad, phicad, vout)
     ! Implements the solution of the Laplace transformation of the
     ! damped, driven, harmonic oscillator, which AADG3 uses to compute
     ! the timeseries of each oscillation mode.
     
     use math, only: TWOPI
+    use types, only: mode
     
     integer, intent(in) :: n_cadences, n_relax
-    real(dp), intent(in) :: freq0, damp0, power
-    real(dp), intent(in) :: dnu, dwid, pcad, phicad
+    type(mode), intent(in) :: m
+    real(dp), intent(in) :: pcad, phicad
     real(dp), intent(in) :: kick(n_cadences+n_relax)
     real(dp), intent(out) :: vout(n_cadences)
 
@@ -86,8 +87,8 @@ contains
     x = 0
     v = 0
 
-    freq = freq0
-    damp = damp0
+    freq = m% freq
+    damp = m% damp
 
     do i = 1, n_relax
        w1 = sqrt((TWOPI*freq)**2 - damp**2)
@@ -100,14 +101,14 @@ contains
        w1 = sqrt((TWOPI*freq)**2 - damp**2)
        c1 = kick(n_relax + i) + damp*x + v
        v = ((c1 - damp*x)*cos(w1) - (w1*x + damp*c1/w1)*sin(w1))*exp(-damp)
-       freq = freq0 + dnu*asum(i)
-       damp = damp0*(1.0_dp + dwid*asum(i))
+       freq = m% freq + m% freq_shift*asum(i)
+       damp = m% damp + m% damp_shift*asum(i)
        x = (x*cos(w1) + c1/w1*sin(w1))*exp(-damp)
        vout(i) = v
     end do
     
     msv = sum(vout**2)/n_cadences
-    vout = vout*(1.0_dp - 0.5_dp*dwid*asum)*sqrt(power/msv)
+    vout = vout*(1.0_dp - 0.5_dp*m% damp_shift/m% damp*asum)*sqrt(m% power/msv)
     
   end subroutine laplace_solution
   

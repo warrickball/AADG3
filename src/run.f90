@@ -17,7 +17,7 @@
 
 program AADG3
 
-  use types, only: dp
+  use types, only: dp, mode
   use math, only: PI, TWOPI, k_to_lm
   
   implicit none
@@ -27,11 +27,12 @@ program AADG3
   integer :: nc(ntype), user_seed
   integer :: n_cadences, n_relax, n_fine
   real(dp), allocatable :: vtotal(:), v(:)
+  real(dp) :: freq_factor
   real(dp) :: rho, tau, sig
   real(dp) :: inclination, cycle_period, cycle_phase, sdnu(ntype)
   real(dp) :: pcad, phicad, nsdsum, p(0:3), nuac
   real(dp) :: cadence, nsd(ntype), pvis(ntype), ptot
-  real(dp), dimension(2000, ntype) :: fc, wc, pc, cs
+  type(mode), dimension(2000, ntype) :: modes
   character(50) :: input_filename, modes_filename, rotation_filename, output_filename
   character(50) :: output_fmt
   logical :: add_granulation
@@ -74,6 +75,8 @@ program AADG3
   if (verbose) write(*,'(A)',advance='no') 'Checking command line arguments... '
   call check_args
   if (verbose) write(*,'(A)') 'Done.'
+
+  freq_factor = 1d-6*cadence
 
   if (verbose) write(*,'(A)',advance='no') 'Initialising random number generator... '
   if (user_seed == 0) then
@@ -127,8 +130,7 @@ program AADG3
      call k_to_lm(i, l, m)
      ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
      if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
-     call overtones(nc(i), nsd(i), sdnu(i), &
-          fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
+     call overtones(nc(i), nsd(i), modes(:,i), v)
      vtotal = vtotal + v
      deallocate(v)
   end do
@@ -208,13 +210,16 @@ contains
           if ((pvis(k) > 1d-8) .and. (d3 > 1d-8)) then
              nc(k) = nc(k) + 1
              if (m == 0) then
-                fc(nc(k), k) = d1
+                modes(nc(k), k)% freq = d1
              else
-                fc(nc(k), k) = d1 + m*s(n,l,abs(m))
+                modes(nc(k), k)% freq = d1 + m*s(n,l,abs(m))
              end if
-             wc(nc(k), k) = d2
-             pc(nc(k), k) = pvis(k)*d3
-             cs(nc(k), k) = d4
+             modes(nc(k), k)% freq = modes(nc(k), k)% freq*freq_factor
+             modes(nc(k), k)% damp = d2*freq_factor*PI
+             modes(nc(k), k)% power = pvis(k)*d3
+             modes(nc(k), k)% freq_shift = d4*freq_factor*sdnu(k)
+             modes(nc(k), k)% damp_shift = &
+                  modes(nc(k), k)% damp*sdnu(k)/0.4d0*0.25d0
           end if
           
        end do
@@ -233,21 +238,18 @@ contains
   end subroutine get_modes
 
   
-  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vout)
+  subroutine overtones(ncomp, nsdi, modes, vout)
     
     use core, only: generate_kicks, laplace_solution
     
     integer, intent(in) :: ncomp
-    real(dp), intent(in) :: nsdi, sdnui
-    real(dp), intent(in), dimension(ncomp) :: freqs, widths, powers, Bshifts
+    real(dp), intent(in) :: nsdi
+    type(mode), intent(in) :: modes(:)
     real(dp), dimension(n_cadences), intent(out) :: vout
     
     integer :: j
-    real(dp) :: damp0, freq0
-    ! real(dp) :: nuac
     real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
     real(dp), dimension(n_cadences) :: vi
-    real(dp) :: dnu, dwid
 
     vi = 0
     vout = 0
@@ -260,20 +262,18 @@ contains
        ukick = 0
        call generate_kicks(n_fine, cadence, tau, nsdi, ukick)
        
-       freq0 = freqs(j)*cadence*1d-6
-       damp0 = cadence*PI*1d-6*widths(j)
        ! Get shift factor for frequency:
-       dnu = sdnui*Bshifts(j)*cadence*1d-6  ! activity cycle frequency shift
+       ! dnu = modes(j)% freq_shift  ! activity cycle frequency shift
        ! ... and factor for width:
-       dwid = (sdnui/0.40)*0.25  ! activity cycle width shift
+       ! dwid = (sdnui/0.40)*0.25  ! activity cycle width shift
 
        !   dwid = (sdnui)/0.40)*0.25*(1.0-dabs((fc(j,ic)/(1000.0*nuac))-2.90d0)/1.1d0)
        !   if ((fc(j,ic)/nuac) < 1800.0.or.((fc(j,ic)/nuac) > 4000.0) dwid = 0.0
 
        kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
 
-       call laplace_solution(n_cadences, n_relax, kickthis, freq0, damp0, &
-            powers(j), dnu, dwid, pcad, phicad, vi)
+       call laplace_solution(n_cadences, n_relax, kickthis, modes(j), &
+            pcad, phicad, vi)
        vout = vout + vi
     end do
 
@@ -515,7 +515,7 @@ contains
 
   subroutine show_version
 
-    write(*,*) 'AADG3 v3.0.1'
+    write(*,*) 'AADG3 v3.0.2a'
 
   end subroutine show_version
   

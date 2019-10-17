@@ -16,11 +16,20 @@
 ! along with AADG3.  If not, see <https://www.gnu.org/licenses/>.
 
 module types
-  ! A simple module defining common type definitions for the rest of
-  ! AADG3.  Currently only defines the double precision type ``dp``.
+  ! Defines common type definitions for the rest of AADG3.
 
   implicit none
 
   integer, parameter :: dp = kind(0.0d0)
+
+  type mode
+     ! all times are in cadences
+     real(dp) :: freq
+     real(dp) :: damp ! = PI*width
+     real(dp) :: power
+     real(dp) :: freq_shift = 0.0d0
+     real(dp) :: damp_shift = 0.0d0
+     real(dp) :: power_shift = 0.0d0
+  end type mode
 
 end module types

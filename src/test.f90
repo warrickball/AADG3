@@ -176,7 +176,8 @@ contains
 
     integer :: n_cadences, n_relax
     real(dp), allocatable :: kick(:), v(:), v_test(:), i_cadences(:)
-    real(dp) :: freq0, damp0, power, dnu, dwid, pcad, phicad
+    type(mode) :: m
+    real(dp) :: pcad, phicad
     integer :: i
 
     n_relax = 1000
@@ -190,19 +191,19 @@ contains
 
     kick = 0
     kick(1) = 1
-    freq0 = 0.001_dp
-    damp0 = 0
-    power = 1
-    dnu = 0
-    dwid = 0
+    m% freq = 0.001_dp
+    m% damp = 1d-99 ! can't be zero
+    m% power = 1
+    m% freq_shift = 0
+    m% damp_shift = 0
     pcad = 100
     phicad = 0
 
-    call laplace_solution(n_cadences, n_relax, kick, freq0, damp0, &
-         power, dnu, dwid, pcad, phicad, v)
+    call laplace_solution(n_cadences, n_relax, kick, m, &
+         pcad, phicad, v)
 
     ! https://physics.stackexchange.com/questions/101129/harmonic-oscillator-driven-by-a-dirac-delta-like-force
-    v_test = sqrt(2.0_dp)*cos(TWOPI*i_cadences*freq0)
+    v_test = sqrt(2.0_dp)*cos(TWOPI*i_cadences*m% freq)
 
     do i = 1, n_cadences
        if (.not. almost_equal(v(i), v_test(i))) then
@@ -213,7 +214,7 @@ contains
        end if
     end do
 
-    deallocate(kick, v, v_test)
+    deallocate(i_cadences, kick, v, v_test)
 
     write(*,'(A24,A8)') 'test_laplace_solution   ', 'PASSED'
     
