@@ -87,7 +87,6 @@ program AADG3
   call random_number(vtotal)  ! warms up RNG
   vtotal = 0
   if (verbose) write(*,'(A)') 'Done.'
-
   
   if (verbose) write(*,'(A)',advance='no') 'Loading mode data... '
   call get_modes
@@ -319,54 +318,55 @@ contains
        ! write(*,*) i, arg
        
        ! integer options
-       if (arg == '--user_seed' .or. arg == '--user-seed') then
+       select case (arg)
+       case ('--user_seed', '--user-seed')
           call get_int_arg(i, user_seed)
-       else if (arg == '--n_relax' .or. arg == '--n-relax') then
+       case ('--n_relax', '--n-relax')
           call get_int_arg(i, n_relax)
-       else if (arg == '--n_cadences' .or. arg == '--n-cadences') then
+       case ('--n_cadences', '--n-cadences')
           call get_int_arg(i, n_cadences)
-       else if (arg == '--n_fine' .or. arg == '--n-fine') then
+       case ('--n_fine', '--n-fine')
           call get_int_arg(i, n_fine)
        ! float options
-       else if (arg == '--cadence') then
+       case ('--cadence')
           call get_real_arg(i, cadence)
-       else if (arg == '--sig') then
+       case ('--sig')
           call get_real_arg(i, sig)
-       else if (arg == '--rho') then
+       case ('--rho')
           call get_real_arg(i, rho)
-       else if (arg == '--tau') then
+       case ('--tau')
           call get_real_arg(i, tau)
-       else if (arg == '--inclination') then
+       case ('--inclination')
           call get_real_arg(i, inclination)
-       else if (arg == '--cycle_period' .or. arg == '--cycle-period') then
+       case ('--cycle_period', '--cycle-period')
           call get_real_arg(i, cycle_period)
-       else if (arg == '--cycle_phase' .or. arg == '--cycle-phase') then
+       case ('--cycle_phase', '--cycle-phase')
           call get_real_arg(i, cycle_phase)
        ! logical options
-       else if (arg == '--add_granulation' .or. arg == '--add-granulation') then
+       case ('--add_granulation', '--add-granulation')
           add_granulation = .true.
-       else if (arg == '--no-add_granulation' .or. arg == '--no-add-granulation') then
+       case ('--no-add_granulation', '--no-add-granulation')
           add_granulation = .false.
-       else if (arg == '--verbose' .or. arg == '-v') then
+       case ('--verbose', '-v')
           verbose = .true.
-       else if (arg == '--no-verbose' .or. arg == '--quiet' .or. arg == '-q') then
+       case ('--no-verbose', '--quiet', '-q')
           verbose = .false.
        ! string options
-       else if (arg == '--modes_filename' .or. arg == '--modes-filename') then
+       case ('--modes_filename', '--modes-filename')
           i = i + 1
           call getarg(i, modes_filename)
-       else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
+       case ('--rotation_filename', '--rotation-filename')
           i = i + 1
           call getarg(i, rotation_filename)
-       else if (arg == '--output_filename' .or. arg == '--output-filename' .or. arg == '-o') then
+       case ('--output_filename', '--output-filename', '-o')
           i = i + 1
           call getarg(i, output_filename)
-       else
+       case default
           if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
           write(*,*) 'argument ', trim(arg), ' is not valid'
           stop 1
-       end if
+       end select
 
        i = i + 1
        call getarg(i, arg)
