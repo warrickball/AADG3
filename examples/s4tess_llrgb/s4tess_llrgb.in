@@ -19,7 +19,7 @@
     p(2) = 0.62d0
     p(3) = 0.075d0
     add_granulation = .true.
-    modes_filename = 'llrgb.con'
-    rotation_filename = 'llrgb.rot'
-    output_filename = 'llrgb.asc'
+    modes_filename = 's4tess_llrgb.con'
+    rotation_filename = 's4tess_llrgb.rot'
+    output_filename = 's4tess_llrgb.asc'
 /
