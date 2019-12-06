@@ -23,7 +23,10 @@ module types
   integer, parameter :: dp = kind(0.0d0)
 
   type mode
-     ! all times are in cadences
+     ! Single object containing all the parameters for a single mode
+     ! (from the simulation's perspective).
+     
+     ! All times are in cadences
      real(dp) :: freq
      real(dp) :: damp ! = PI*width
      real(dp) :: power
