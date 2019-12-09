@@ -110,11 +110,10 @@ program AADG3
   if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   
   !$OMP PARALLEL DO SCHEDULE(dynamic) PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
-  do i = 1, ntype
+  do i = ntype, 1, -1
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
-     ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
-     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
+     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), ntype+1-i, ' of ', ntype
      call overtones(nc(i), nsd(i), modes(:,i), v)
      vtotal = vtotal + v
      deallocate(v)
