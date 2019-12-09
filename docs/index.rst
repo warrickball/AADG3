@@ -109,12 +109,12 @@ Navigate to any of those and run ``AADG3 <example>.in``.  e.g.
 ::
 
    cd examples/s4tess_llrgb
-   AADG3 llrgb.in
+   AADG3 s4tess_llrgb.in
 
-The file ``llrgb.asc`` then contains the output timeseries.  The input
-file ``llrgb.in`` contains some information about this example.  These
-runs can take several minutes to finish, so don't be worried if you
-don't see any output for a little while.
+The file ``s4tess_llrgb.asc`` then contains the output timeseries.
+The input file ``s4tess_llrgb.in`` contains some information about
+this example.  These runs can take several minutes to finish, so don't
+be worried if you don't see any output for a little while.
 
 The various inputs are described in detail `here <input.html>`__.
 
