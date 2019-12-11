@@ -51,8 +51,29 @@ for filename in filenames:
         p_tot += LS(t, yi)[1]
 
     pl.loglog(f, p_tot/args.N, label=filename)
+
+# create a frequency range that resolves the analytic Lorentzians
+ff = []
+one = np.tan(np.linspace(-np.pi/2.2, np.pi/2.2, 21))
+one = one/np.max(one)*5
+for row in modes:
+    l = row['l']
+
+    ff.append(one*row['width'] + row['freq'])
     
-ff = np.linspace(f[0], f[-1], 10000)
+    for m in range(1, l+1):
+        splitting = rot[(rot['l']==l)
+                        &(rot['m']==m)
+                        &(rot['n']==row['n'])]['splitting']
+        if len(splitting) > 1:
+            splitting = splitting[0]
+
+        ff.append(one*row['width'] + row['freq'] - m*splitting)
+        ff.append(one*row['width'] + row['freq'] + m*splitting)
+
+# combine frequency mesh for modes with 5000 points across background
+ff = np.sort(np.hstack(ff + [np.linspace(f[0], f[-1], 5000)]))
+
 pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot), label=args.filename)
 
 if args.legend:
