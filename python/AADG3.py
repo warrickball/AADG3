@@ -135,7 +135,12 @@ def load_namelist(filename):
         {'n_fine': 50}
 
     """
-    nml = {'p(0)': 1.0}
+    # include valid default values
+    nml = {'user_seed': 0, 'n_fine': 0, 'inclination': 0.0,
+           'cycle_period': 1e99, 'cycle_phase': 0.0, 'nuac': 0.0, 'sdnu': 0.0,
+           'p(0)': 1.0, 'p(1)': 0.0, 'p(2)': 0.0, 'p(3)': 0.0,
+           'add_granulation': True, 'rotation_filename': '',
+           'verbose': False}
 
     with open(filename, 'r') as f:
         lines = [[word.strip() for word in line.split('=')[:2]] for
