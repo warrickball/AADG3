@@ -163,8 +163,12 @@ contains
           pvis(k) = p(l)*Elm(l,abs(m))
        end do
     end do
-    
-    call load_rotation(rotation_filename, lbound(s, 1), s)
+
+    if (rotation_filename == '') then
+       s = 0d0
+    else
+       call load_rotation(rotation_filename, lbound(s, 1), s)
+    end if
 
     ierr = 0
     open(newunit=iounit, file=modes_filename, status='old', iostat=ierr)
