@@ -123,7 +123,7 @@ program AADG3
   if (verbose) write(*,'(A)') 'Finished computing oscillations.'
 
   ! Now output time series to disk:
-  if (verbose) write(*,'(A)',advance='no') 'Saving output timeseries to disk... '
+  if (verbose) write(*,'(A)',advance='no') 'Saving output timeseries to '//trim(output_filename)//'... '
   ierr = 0
   open(newunit=iounit, file=output_filename, status='replace', iostat=ierr)
   if (ierr /= 0) then
