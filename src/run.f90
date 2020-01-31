@@ -128,7 +128,7 @@ program AADG3
   open(newunit=iounit, file=output_filename, status='replace', iostat=ierr)
   if (ierr /= 0) then
      if (verbose) write(*,*) ''
-     write(*,*) 'ERROR in AADG3 while opening ', output_filename
+     write(*,*) 'ERROR in AADG3 while opening '//trim(output_filename)
      stop
   end if
   write(iounit, output_fmt) (vtotal(i), i=1, n_cadences)
@@ -174,7 +174,7 @@ contains
     open(newunit=iounit, file=modes_filename, status='old', iostat=ierr)
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3.get_modes while opening ', modes_filename
+       write(*,*) 'ERROR in AADG3.get_modes while opening '//trim(modes_filename)
        stop
     end if
 
@@ -189,7 +189,7 @@ contains
        read(iounit, *, iostat=ierr) l, n, d1, d2, d3, d4
        if (ierr /= 0) then
           if (verbose) write(*,*) ''
-          write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading ', modes_filename
+          write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading '//trim(modes_filename)
           exit
        end if
 
@@ -215,7 +215,7 @@ contains
 
     if (ierr > 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3.get_modes while reading ', modes_filename
+       write(*,*) 'ERROR in AADG3.get_modes while reading '//trim(modes_filename)
        stop
     end if
     
@@ -297,7 +297,7 @@ contains
     
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3 while opening ', input_filename
+       write(*,*) 'ERROR in AADG3 while opening '//trim(input_filename)
        stop 1
     end if
     
@@ -306,7 +306,7 @@ contains
     
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3 while reading ', input_filename
+       write(*,*) 'ERROR in AADG3 while reading '//trim(input_filename)
        write(*,*) 'the following runtime error may be informative'
        open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
        read(iounit, nml=controls)
@@ -367,7 +367,7 @@ contains
        case default
           if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
-          write(*,*) 'argument ', trim(arg), ' is not valid'
+          write(*,*) 'argument '//trim(arg)//' is not valid'
           stop 1
        end select
 
@@ -389,7 +389,7 @@ contains
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_int_arg: could not parse string ', arg, 'as integer'
+       write(*,*) 'ERROR in get_int_arg: could not parse string '//trim(arg)//'as integer'
        stop 1
     end if
 
@@ -407,7 +407,7 @@ contains
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_real_arg: could not parse string ', arg, 'as real(dp)'
+       write(*,*) 'ERROR in get_real_arg: could not parse string '//trim(arg)//'as real(dp)'
        stop 1
     end if
 
@@ -450,7 +450,7 @@ contains
 
     if (val < 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: ', name, ' must be positive'
+       write(*,*) 'ERROR: '//trim(name)//' must be positive'
        write(*,*) 'but got ', val
        stop 1
     end if
@@ -465,7 +465,7 @@ contains
 
     if (val < 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: ', name, ' must be positive'
+       write(*,*) 'ERROR: '//trim(name)//' must be positive'
        write(*,*) 'but got ', val
        stop 1
     end if
