@@ -278,7 +278,7 @@ contains
     character(80) :: arg
     integer :: i
     
-    call getarg(1, arg)
+    call get_command_argument(1, arg)
     if (arg == '-h' .or. arg == '--help') then
        call show_help
        stop
@@ -290,7 +290,7 @@ contains
        stop
     end if
     
-    call getarg(1, input_filename)
+    call get_command_argument(1, input_filename)
     
     ! Get basic parameters from the information file:
     open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
@@ -316,7 +316,7 @@ contains
     ! loop over remaining command line arguments to get override input
     ! values
     i = 2
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     do while (arg  /= ' ')
        ! write(*,*) i, arg
        
@@ -357,13 +357,13 @@ contains
        ! string options
        case ('--modes_filename', '--modes-filename')
           i = i + 1
-          call getarg(i, modes_filename)
+          call get_command_argument(i, modes_filename)
        case ('--rotation_filename', '--rotation-filename')
           i = i + 1
-          call getarg(i, rotation_filename)
+          call get_command_argument(i, rotation_filename)
        case ('--output_filename', '--output-filename', '-o')
           i = i + 1
-          call getarg(i, output_filename)
+          call get_command_argument(i, output_filename)
        case default
           if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
@@ -372,7 +372,7 @@ contains
        end select
 
        i = i + 1
-       call getarg(i, arg)
+       call get_command_argument(i, arg)
     end do
     
   end subroutine parse_args
@@ -385,7 +385,7 @@ contains
     character(80) :: arg
     
     i = i + 1
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
@@ -403,7 +403,7 @@ contains
     character(80) :: arg
 
     i = i + 1
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
