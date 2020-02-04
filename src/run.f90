@@ -415,62 +415,75 @@ contains
   
 
   subroutine check_args
-    
-    if (inclination < 0 .or. inclination > 90) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: inclination must be between 0 and 90 degrees'
-       write(*,*) 'but got ', inclination
-       stop 1
-    end if
 
-    if (rho < 0 .or. rho > 1) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: rho must be between 0 and 1'
-       write(*,*) 'but got ', rho
-       stop 1
-    end if
+    call check_bounds_dp('inclination', inclination, lower=0d0, upper=90d0)
+    call check_bounds_dp('rho', rho, lower=0d0, upper=1d0)
 
-    call check_positive_float('cadence', cadence)
-    call check_positive_float('sig', sig)
-    call check_positive_float('tau', tau)
-    call check_positive_float('cycle_period', cycle_period)
-    call check_positive_float('cycle_phase', cycle_phase)
+    call check_bounds_dp('cadence', cadence, lower=0d0)
+    call check_bounds_dp('sig', sig, lower=0d0)
+    call check_bounds_dp('tau', tau, lower=0d0)
+    call check_bounds_dp('cycle_period', cycle_period, lower=0d0)
+    call check_bounds_dp('cycle_phase', cycle_phase, lower=0d0)
     
-    call check_positive_int('n_fine', n_fine)
-    call check_positive_int('n_relax', n_relax)
-    call check_positive_int('n_cadences', n_cadences)
+    call check_bounds_int('n_fine', n_fine, lower=0)
+    call check_bounds_int('n_relax', n_relax, lower=0)
+    call check_bounds_int('n_cadences', n_cadences, lower=0)
     
   end subroutine check_args
 
 
-  subroutine check_positive_float(name, val)
+  subroutine check_bounds_dp(name, val, lower, upper)
     
     character(*), intent(in) :: name
     real(dp), intent(in) :: val
+    real(dp), intent(in), optional :: lower, upper
 
-    if (val < 0) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: '//trim(name)//' must be positive'
-       write(*,*) 'but got ', val
-       stop 1
+    if (present(lower)) then
+       if (val < lower) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be greater than', lower
+          write(*,*) '       but got ', val
+          stop 1
+       end if
+    end if
+
+    if (present(upper)) then
+       if (val > upper) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be less than', upper
+          write(*,*) '       but got ', val
+          stop 1
+       end if
     end if
     
-  end subroutine check_positive_float
+  end subroutine check_bounds_dp
 
 
-  subroutine check_positive_int(name, val)
+  subroutine check_bounds_int(name, val, lower, upper)
     
     character(*), intent(in) :: name
     integer, intent(in) :: val
+    integer, intent(in), optional :: lower, upper
 
-    if (val < 0) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: '//trim(name)//' must be positive'
-       write(*,*) 'but got ', val
-       stop 1
+    if (present(lower)) then
+       if (val < lower) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be greater than', lower
+          write(*,*) '       but got ', val
+          stop 1
+       end if
+    end if
+
+    if (present(upper)) then
+       if (val > upper) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be less than', upper
+          write(*,*) '       but got ', val
+          stop 1
+       end if
     end if
     
-  end subroutine check_positive_int
+  end subroutine check_bounds_int
   
   
   subroutine show_help
