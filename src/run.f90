@@ -445,8 +445,8 @@ contains
 
   subroutine check_positive_float(name, val)
     
-    character(*) :: name
-    real(dp) :: val
+    character(*), intent(in) :: name
+    real(dp), intent(in) :: val
 
     if (val < 0) then
        if (verbose) write(*,*) ''
@@ -460,8 +460,8 @@ contains
 
   subroutine check_positive_int(name, val)
     
-    character(*) :: name
-    integer :: val
+    character(*), intent(in) :: name
+    integer, intent(in) :: val
 
     if (val < 0) then
        if (verbose) write(*,*) ''
