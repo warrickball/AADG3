@@ -23,14 +23,6 @@ parser.add_argument('--legend', action='store_true',
                     help="add a legend, using filenames as keys")
 args = parser.parse_args()
 
-def LS(t, y):
-    f, p = LombScargle(t, y).autopower(normalization='psd',
-                                       nyquist_factor=1,
-                                       samples_per_peak=1)
-    f = f*1e6  # to uHz
-    p = p*np.var(y)/np.trapz(p, x=f)  # Bill's normalization
-    return f, p
-
 nml, modes, rot = AADG3.load_all_input(args.filename)
 
 filenames = args.output_files if args.output_files else [nml['output_filename']]
@@ -41,16 +33,18 @@ for filename in filenames:
     except IOError:
         y0 = np.loadtxt('/'.join(args.filename.split('/')[:-1] + [filename]))
 
-    t0 = np.arange(len(y0), dtype=float)*nml['cadence']
     y = y0[:len(y0)//args.N*args.N].reshape((args.N, -1))
-    t = t0[:len(y[0])]
 
-    f, p_tot = LS(t, y[0])
+    f = np.fft.rfftfreq(len(y[0]), d=nml['cadence'])
+    f *= 1e6
+    p = np.zeros_like(f)
 
-    for yi in y[1:]:
-        p_tot += LS(t, yi)[1]
+    for yi in y:
+        pi = np.abs(np.fft.rfft(yi))**2
+        pi = pi*np.var(yi)/np.trapz(pi, x=f) # Parseval's theorem
+        p += pi
 
-    pl.loglog(f, p_tot/args.N, label=filename)
+    pl.loglog(f, p/args.N, label=filename)
 
 # create a frequency range that resolves the analytic Lorentzians
 ff = []
@@ -60,7 +54,7 @@ for row in modes:
     l = row['l']
 
     ff.append(one*row['width'] + row['freq'])
-    
+
     for m in range(1, l+1):
         splitting = rot[(rot['l']==l)
                         &(rot['m']==m)
@@ -78,7 +72,7 @@ pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot), label=args.filename)
 
 if args.legend:
     pl.legend()
-    
+
 pl.show()
 
 # f0, p0 = LS(t0, y0)
