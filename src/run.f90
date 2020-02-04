@@ -389,7 +389,7 @@ contains
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_int_arg: could not parse string '//trim(arg)//'as integer'
+       write(*,*) 'ERROR in get_int_arg: could not parse string '//trim(arg)//' as integer'
        stop 1
     end if
 
@@ -407,7 +407,7 @@ contains
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_real_arg: could not parse string '//trim(arg)//'as real(dp)'
+       write(*,*) 'ERROR in get_real_arg: could not parse string '//trim(arg)//' as real(dp)'
        stop 1
     end if
 
