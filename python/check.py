@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import numpy as np
 import matplotlib.pyplot as pl
@@ -21,6 +22,11 @@ parser.add_argument('-o', '--output-files', type=str, nargs='+', default=None,
                     "input file")
 parser.add_argument('--legend', action='store_true',
                     help="add a legend, using filenames as keys")
+parser.add_argument('--title', type=str, default=[''], nargs='+',
+                    help="title for figure (can include spaces)")
+parser.add_argument('--hide-model', action='store_true',
+                    help="don't plot the model power spectrum")
+parser.add_argument
 args = parser.parse_args()
 
 nml, modes, rot = AADG3.load_all_input(args.filename)
@@ -46,33 +52,37 @@ for filename in filenames:
 
     pl.loglog(f, p/args.N, label=filename)
 
-# create a frequency range that resolves the analytic Lorentzians
-ff = []
-one = np.tan(np.linspace(-np.pi/2.2, np.pi/2.2, 21))
-one = one/np.max(one)*5
-for row in modes:
-    l = row['l']
+if not args.hide_model:
+    # create a frequency range that resolves the analytic Lorentzians
+    ff = []
+    one = np.tan(np.linspace(-np.pi/2.2, np.pi/2.2, 21))
+    one = one/np.max(one)*5
+    for row in modes:
+        l = row['l']
 
-    ff.append(one*row['width'] + row['freq'])
+        ff.append(one*row['width'] + row['freq'])
 
-    for m in range(1, l+1):
-        splitting = rot[(rot['l']==l)
-                        &(rot['m']==m)
-                        &(rot['n']==row['n'])]['splitting']
-        if len(splitting) > 1:
-            splitting = splitting[0]
+        for m in range(1, l+1):
+            splitting = rot[(rot['l']==l)
+                            &(rot['m']==m)
+                            &(rot['n']==row['n'])]['splitting']
+            if len(splitting) > 1:
+                splitting = splitting[0]
 
-        ff.append(one*row['width'] + row['freq'] - m*splitting)
-        ff.append(one*row['width'] + row['freq'] + m*splitting)
+            ff.append(one*row['width'] + row['freq'] - m*splitting)
+            ff.append(one*row['width'] + row['freq'] + m*splitting)
 
-# combine frequency mesh for modes with 5000 points across background
-ff = np.sort(np.hstack(ff + [np.linspace(f[0], f[-1], 5000)]))
+    # combine frequency mesh for modes with 5000 points across background
+    ff = np.sort(np.hstack(ff + [np.linspace(f[0], f[-1], 5000)]))
 
-pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot), label=args.filename)
+    pl.loglog(ff, AADG3.PS_model(ff, nml, modes, rot), label=args.filename)
 
 if args.legend:
     pl.legend()
 
+pl.xlabel('frequency (μHz)')
+pl.ylabel('power density (ppm²/μHz)')
+pl.title(' '.join(args.title))
 pl.show()
 
 # f0, p0 = LS(t0, y0)
