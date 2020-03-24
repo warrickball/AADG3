@@ -19,18 +19,19 @@ program AADG3
 
   use types, only: dp, mode
   use math, only: PI, TWOPI, k_to_lm
+  use core, only: overtones
   
   implicit none
-  
+
   integer :: ierr, i, l, m
   integer, parameter :: ntype = 16
   integer :: nc(ntype), user_seed
   integer :: n_cadences, n_relax, n_fine
   real(dp), allocatable :: vtotal(:), v(:)
-  real(dp) :: freq_factor
+  real(dp) :: freq_factor, tau_cad
   real(dp) :: rho, tau, sig
   real(dp) :: inclination, cycle_period, cycle_phase, sdnu(ntype)
-  real(dp) :: pcad, phicad, nsdsum, p(0:3), nuac
+  real(dp) :: period_cad, phase_cad, nsdsum, p(0:3), nuac
   real(dp) :: cadence, nsd(ntype), pvis(ntype), ptot
   type(mode), dimension(2000, ntype) :: modes
   character(50) :: input_filename, modes_filename, rotation_filename, output_filename
@@ -97,13 +98,15 @@ program AADG3
   ! noise won't be added if ncomp == 0
   ptot = sum(pvis)
 
+  tau_cad = tau/cadence
+
   ! Calculate variances:
-  nsd = sqrt(cadence/tau/n_fine)*sig*sqrt(pvis/ptot)
+  nsd = sqrt(1.0_dp/tau_cad/n_fine)*sig*sqrt(pvis/ptot)
   nsdsum = sum(nsd**2)
   
   ! convert stellar cycle period and phase into multiples of cadence
-  pcad = 2.0*cycle_period*86400.0*365.25/cadence
-  phicad = 2.0*cycle_phase*86400.0*365.25/cadence
+  period_cad = 2.0*cycle_period*86400.0*365.25/cadence
+  phase_cad = 2.0*cycle_phase*86400.0*365.25/cadence
 
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
@@ -114,7 +117,9 @@ program AADG3
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
      if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), ntype+1-i, ' of ', ntype
-     call overtones(nc(i), nsd(i), modes(:,i), v)
+     call overtones(n_fine, n_relax, n_cadences, rho, &
+          tau_cad, nsd(i), period_cad, phase_cad, modes(1:nc(i), i), &
+          add_granulation, v)
      vtotal = vtotal + v
      deallocate(v)
   end do
@@ -226,54 +231,6 @@ contains
   end subroutine get_modes
 
   
-  subroutine overtones(ncomp, nsdi, modes, vout)
-    
-    use core, only: generate_kicks, laplace_solution
-    
-    integer, intent(in) :: ncomp
-    real(dp), intent(in) :: nsdi
-    type(mode), intent(in) :: modes(:)
-    real(dp), dimension(n_cadences), intent(out) :: vout
-    
-    integer :: j
-    real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
-    real(dp), dimension(n_cadences) :: vi
-
-    vi = 0
-    vout = 0
-
-    ckick = 0
-    call generate_kicks(n_fine, cadence, tau, nsdi, ckick)
-
-    ! loop over the overtones for this (l,|m|) value
-    do j = 1, ncomp
-       ukick = 0
-       call generate_kicks(n_fine, cadence, tau, nsdi, ukick)
-       
-       ! Get shift factor for frequency:
-       ! dnu = modes(j)% freq_shift  ! activity cycle frequency shift
-       ! ... and factor for width:
-       ! dwid = (sdnui/0.40)*0.25  ! activity cycle width shift
-
-       !   dwid = (sdnui)/0.40)*0.25*(1.0-dabs((fc(j,ic)/(1000.0*nuac))-2.90d0)/1.1d0)
-       !   if ((fc(j,ic)/nuac) < 1800.0.or.((fc(j,ic)/nuac) > 4000.0) dwid = 0.0
-
-       kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
-
-       call laplace_solution(n_cadences, n_relax, kickthis, modes(j), &
-            pcad, phicad, vi)
-       vout = vout + vi
-    end do
-
-    if (add_granulation) then
-       vout = vout + ckick(n_relax+1:n_relax+n_cadences)
-    end if
-
-    return
-    
-  end subroutine overtones
-  
-
   subroutine parse_args
     character(80) :: arg
     integer :: i

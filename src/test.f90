@@ -174,10 +174,10 @@ contains
     use core, only: laplace_solution
     use math, only: TWOPI
 
-    integer :: n_cadences, n_relax
+    integer :: n_relax, n_cadences
     real(dp), allocatable :: kick(:), v(:), v_test(:), i_cadences(:)
     type(mode) :: m
-    real(dp) :: pcad, phicad
+    real(dp) :: period_cad, phase_cad
     integer :: i
 
     n_relax = 1000
@@ -196,11 +196,11 @@ contains
     m% power = 1
     m% freq_shift = 0
     m% damp_shift = 0
-    pcad = 100
-    phicad = 0
+    period_cad = 100d0
+    phase_cad = 0d0
 
-    call laplace_solution(n_cadences, n_relax, kick, m, &
-         pcad, phicad, v)
+    call laplace_solution(n_relax, n_cadences, kick, m, &
+         period_cad, phase_cad, v)
 
     ! https://physics.stackexchange.com/questions/101129/harmonic-oscillator-driven-by-a-dirac-delta-like-force
     v_test = sqrt(2.0_dp)*cos(TWOPI*i_cadences*m% freq)
