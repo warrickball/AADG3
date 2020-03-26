@@ -46,8 +46,8 @@ AADG3 is hosted on `GitHub <https://github.com/warrickball/AADG3>`_, where you c
 `list of release versions <https://github.com/warrickball/AADG3/releases>`_ or fork/clone
 the repo.  For convenience, from here you can download archives of the
 
-* most recent release, **v3.0.1** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.1.tar.gz>`__,
-  `zip <https://github.com/warrickball/AADG3/archive/v3.0.1.zip>`__),
+* most recent release, **v3.0.2** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.2.tar.gz>`__,
+  `zip <https://github.com/warrickball/AADG3/archive/v3.0.2.zip>`__),
   
 * current stable branch (`tarball <https://github.com/warrickball/AADG3/archive/stable.tar.gz>`__, 
   `zip <https://github.com/warrickball/AADG3/archive/stable.zip>`__), and
