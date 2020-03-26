@@ -1,20 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>The AsteroFLAG Artificial Dataset Generator 3 (AADG3) &#8212; AADG3 3.0.1 documentation</title>
+    <meta charset="utf-8" />
+    <title>The AsteroFLAG Artificial Dataset Generator 3 (AADG3) &#8212; AADG3 3.0.2 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Input files and command-line arguments" href="input.html" />
@@ -64,11 +62,11 @@ research.</p>
 <a class="reference external" href="https://github.com/warrickball/AADG3/releases">list of release versions</a> or fork/clone
 the repo.  For convenience, from here you can download archives of the</p>
 <ul class="simple">
-<li>most recent release, <strong>v3.0.1</strong> (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.1.tar.gz">tarball</a>,
-<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.1.zip">zip</a>),</li>
-<li>current stable branch (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.tar.gz">tarball</a>,
-<a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.zip">zip</a>), and</li>
-<li>current development version (master branch, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.tar.gz">tarball</a>, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.zip">zip</a>)</li>
+<li><p>most recent release, <strong>v3.0.2</strong> (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.2.tar.gz">tarball</a>,
+<a class="reference external" href="https://github.com/warrickball/AADG3/archive/v3.0.2.zip">zip</a>),</p></li>
+<li><p>current stable branch (<a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.tar.gz">tarball</a>,
+<a class="reference external" href="https://github.com/warrickball/AADG3/archive/stable.zip">zip</a>), and</p></li>
+<li><p>current development version (master branch, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.tar.gz">tarball</a>, <a class="reference external" href="https://github.com/warrickball/AADG3/archive/master.zip">zip</a>)</p></li>
 </ul>
 </div>
 <div class="section" id="installation">
@@ -112,13 +110,13 @@ know if any failures are reported.</p>
 <p>To get started, a few examples are provided in <code class="docutils literal notranslate"><span class="pre">examples/</span></code>.
 Navigate to any of those and run <code class="docutils literal notranslate"><span class="pre">AADG3</span> <span class="pre">&lt;example&gt;.in</span></code>.  e.g.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">examples</span><span class="o">/</span><span class="n">s4tess_llrgb</span>
-<span class="n">AADG3</span> <span class="n">llrgb</span><span class="o">.</span><span class="ow">in</span>
+<span class="n">AADG3</span> <span class="n">s4tess_llrgb</span><span class="o">.</span><span class="ow">in</span>
 </pre></div>
 </div>
-<p>The file <code class="docutils literal notranslate"><span class="pre">llrgb.asc</span></code> then contains the output timeseries.  The input
-file <code class="docutils literal notranslate"><span class="pre">llrgb.in</span></code> contains some information about this example.  These
-runs can take several minutes to finish, so don’t be worried if you
-don’t see any output for a little while.</p>
+<p>The file <code class="docutils literal notranslate"><span class="pre">s4tess_llrgb.asc</span></code> then contains the output timeseries.
+The input file <code class="docutils literal notranslate"><span class="pre">s4tess_llrgb.in</span></code> contains some information about
+this example.  These runs can take several minutes to finish, so don’t
+be worried if you don’t see any output for a little while.</p>
 <p>The various inputs are described in detail <a class="reference external" href="input.html">here</a>.</p>
 </div>
 <div class="section" id="python-module">
@@ -188,26 +186,24 @@ please read the <a class="reference external" href="python.html">API documentati
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2018, Warrick Ball, Bill Chaplin.
+      &copy;2018-2020, Warrick Ball, Bill Chaplin.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

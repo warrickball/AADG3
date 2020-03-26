@@ -20,4 +20,3 @@ Module ``core``
 Module ``types``
 ++++++++++++++++
 .. f:automodule:: types
-

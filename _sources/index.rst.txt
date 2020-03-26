@@ -46,8 +46,8 @@ AADG3 is hosted on `GitHub <https://github.com/warrickball/AADG3>`_, where you c
 `list of release versions <https://github.com/warrickball/AADG3/releases>`_ or fork/clone
 the repo.  For convenience, from here you can download archives of the
 
-* most recent release, **v3.0.1** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.1.tar.gz>`__,
-  `zip <https://github.com/warrickball/AADG3/archive/v3.0.1.zip>`__),
+* most recent release, **v3.0.2** (`tarball <https://github.com/warrickball/AADG3/archive/v3.0.2.tar.gz>`__,
+  `zip <https://github.com/warrickball/AADG3/archive/v3.0.2.zip>`__),
   
 * current stable branch (`tarball <https://github.com/warrickball/AADG3/archive/stable.tar.gz>`__, 
   `zip <https://github.com/warrickball/AADG3/archive/stable.zip>`__), and
@@ -109,12 +109,12 @@ Navigate to any of those and run ``AADG3 <example>.in``.  e.g.
 ::
 
    cd examples/s4tess_llrgb
-   AADG3 llrgb.in
+   AADG3 s4tess_llrgb.in
 
-The file ``llrgb.asc`` then contains the output timeseries.  The input
-file ``llrgb.in`` contains some information about this example.  These
-runs can take several minutes to finish, so don't be worried if you
-don't see any output for a little while.
+The file ``s4tess_llrgb.asc`` then contains the output timeseries.
+The input file ``s4tess_llrgb.in`` contains some information about
+this example.  These runs can take several minutes to finish, so don't
+be worried if you don't see any output for a little while.
 
 The various inputs are described in detail `here <input.html>`__.
 
