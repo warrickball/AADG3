@@ -1,4 +1,4 @@
-! Copyright 2018-2019 Warrick Ball & Bill Chaplin
+! Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 

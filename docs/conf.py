@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'AADG3'
-copyright = '2018-2019, Warrick Ball, Bill Chaplin'
+copyright = '2018-2020, Warrick Ball, Bill Chaplin'
 author = 'Warrick Ball, Bill Chaplin'
 
 # The version info for the project you're documenting, acts as replacement for
