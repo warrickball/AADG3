@@ -1,4 +1,4 @@
-! Copyright 2018-2019 Warrick Ball & Bill Chaplin
+! Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -19,13 +19,61 @@ module core
   ! The ``core`` module contains the main subroutines that AADG3 uses
   ! to generate the timeseries for an oscillation mode.
 
-  use types, only: dp
+  use types, only: dp, mode
 
   implicit none
 
 contains
 
-  subroutine generate_kicks(n_fine, cadence, tau, nsd, kicks)
+  subroutine overtones(n_fine, n_relax, n_cadences, rho, tau_cad, nsdi, &
+       period_cad, phase_cad, modes, add_granulation, vout)
+
+    integer, intent(in) :: n_fine, n_relax, n_cadences
+    real(dp), intent(in) :: rho, tau_cad, nsdi, period_cad, phase_cad
+    type(mode), intent(in) :: modes(:)
+    logical, intent(in) :: add_granulation
+    real(dp), dimension(n_cadences), intent(out) :: vout
+
+    integer :: i
+    real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
+    real(dp), dimension(n_cadences) :: vi
+
+    vi = 0
+    vout = 0
+
+    ckick = 0
+    call generate_kicks(n_fine, tau_cad, nsdi, ckick)
+
+    ! loop over the overtones for this (l,|m|) value
+    do i = 1, size(modes)
+       ukick = 0
+       call generate_kicks(n_fine, tau_cad, nsdi, ukick)
+
+       ! Get shift factor for frequency:
+       ! dnu = modes(i)% freq_shift  ! activity cycle frequency shift
+       ! ... and factor for width:
+       ! dwid = (sdnui/0.40)*0.25  ! activity cycle width shift
+
+       !   dwid = (sdnui)/0.40)*0.25*(1.0-dabs((fc(i,ic)/(1000.0*nuac))-2.90d0)/1.1d0)
+       !   if ((fc(i,ic)/nuac) < 1800.0.or.((fc(i,ic)/nuac) > 4000.0) dwid = 0.0
+
+       kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
+
+       call laplace_solution(n_relax, n_cadences, kickthis, modes(i), &
+            period_cad, phase_cad, vi)
+       vout = vout + vi
+    end do
+
+    if (add_granulation) then
+       vout = vout + ckick(n_relax+1:n_relax+n_cadences)
+    end if
+
+    return
+
+  end subroutine overtones
+
+
+  subroutine generate_kicks(n_fine, tau_cad, nsd, kicks)
     ! Generates an exponentially-damped random walk (i.e. an AR(1)
     ! process) that AADG3 uses to model granulation, for either the
     ! correlated or uncorrelated component of the driving term.
@@ -33,25 +81,24 @@ contains
     use math, only: randn
     
     integer, intent(in) :: n_fine
-    real(dp), intent(in) :: cadence, tau, nsd
+    real(dp), intent(in) :: tau_cad, nsd
     real(dp), intent(out) :: kicks(:)
 
-    real(dp) :: v, vsum, cadfine_tau
+    real(dp) :: v, vsum, tau_fine_inv
     real(dp) :: da(n_fine)
-    integer :: i, j, Nsteps
+    integer :: i, j
 
-    Nsteps = size(kicks)
-    cadfine_tau = cadence/n_fine/tau
+    tau_fine_inv = 1.0_dp/n_fine/tau_cad
 
     call randn(da)
     
     v = nsd*da(1)
-    do i = 1, Nsteps
+    do i = 1, size(kicks)
        call randn(da)
 
        vsum = v
        do j = 2, n_fine
-          v = exp(-cadfine_tau)*v + nsd*da(j)
+          v = exp(-tau_fine_inv)*v + nsd*da(j)
           vsum = vsum + v
        end do
        kicks(i) = vsum/n_fine
@@ -60,17 +107,17 @@ contains
   end subroutine generate_kicks
 
 
-  subroutine laplace_solution(n_cadences, n_relax, kick, freq0, damp0, &
-       power, dnu, dwid, pcad, phicad, vout)
+  subroutine laplace_solution(n_relax, n_cadences, kick, m, &
+       period_cad, phase_cad, vout)
     ! Implements the solution of the Laplace transformation of the
     ! damped, driven, harmonic oscillator, which AADG3 uses to compute
     ! the timeseries of each oscillation mode.
     
     use math, only: TWOPI
     
-    integer, intent(in) :: n_cadences, n_relax
-    real(dp), intent(in) :: freq0, damp0, power
-    real(dp), intent(in) :: dnu, dwid, pcad, phicad
+    integer, intent(in) :: n_relax, n_cadences
+    type(mode), intent(in) :: m
+    real(dp), intent(in) :: period_cad, phase_cad
     real(dp), intent(in) :: kick(n_cadences+n_relax)
     real(dp), intent(out) :: vout(n_cadences)
 
@@ -81,13 +128,13 @@ contains
     real(dp) :: i_cadences(n_cadences)
 
     i_cadences = [(i, i = 1, n_cadences)]
-    asum = sin(TWOPI*(i_cadences-phicad)/pcad)**4
+    asum = sin(TWOPI*(i_cadences-phase_cad)/period_cad)**4
 
     x = 0
     v = 0
 
-    freq = freq0
-    damp = damp0
+    freq = m% freq
+    damp = m% damp
 
     do i = 1, n_relax
        w1 = sqrt((TWOPI*freq)**2 - damp**2)
@@ -100,14 +147,14 @@ contains
        w1 = sqrt((TWOPI*freq)**2 - damp**2)
        c1 = kick(n_relax + i) + damp*x + v
        v = ((c1 - damp*x)*cos(w1) - (w1*x + damp*c1/w1)*sin(w1))*exp(-damp)
-       freq = freq0 + dnu*asum(i)
-       damp = damp0*(1.0_dp + dwid*asum(i))
+       freq = m% freq + m% freq_shift*asum(i)
+       damp = m% damp + m% damp_shift*asum(i)
        x = (x*cos(w1) + c1/w1*sin(w1))*exp(-damp)
        vout(i) = v
     end do
     
     msv = sum(vout**2)/n_cadences
-    vout = vout*(1.0_dp - 0.5_dp*dwid*asum)*sqrt(power/msv)
+    vout = vout*(1.0_dp - 0.5_dp*m% damp_shift/m% damp*asum)*sqrt(m% power/msv)
     
   end subroutine laplace_solution
   

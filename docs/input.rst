@@ -85,10 +85,11 @@ Namelist control file
   Name of the file containing the mode frequency information (usually
   ending ``.con``).
 
-- ``rotation_filename`` (*string*)
+- ``rotation_filename`` (*string*, *default=''*)
 
   Name of the file containing the rotational splitting information
-  (usually ending ``.rot``).
+  (usually ending ``.rot``).  If empty (i.e. ``''``), then the
+  rotation rate is taken to be zero.
 
 - ``output_filename`` (*string*)
 

@@ -80,7 +80,9 @@ def PS_model(f, nml, modes, rot):
 def load_all_input(filename):
     """Load all data specified by namelist ``filename``, including mode
     data and rotational splittings in ``modes_filename`` and
-    ``rotation_filename``.
+    ``rotation_filename``.  If ``rotation_filename`` is ``''``, return
+    rotation data equivalent to zero rotation (which is what the
+    simulator does).
 
     Parameters
     ----------
@@ -106,10 +108,13 @@ def load_all_input(filename):
     except OSError:
         modes = load_modes(base + nml['modes_filename'])
 
-    try:
-        rot = load_rot(nml['rotation_filename'])
-    except OSError:
-        rot = load_rot(base + nml['rotation_filename'])
+    if nml['rotation_filename'] == '':
+        rot = generate_const_rot(modes)
+    else:
+        try:
+            rot = load_rot(nml['rotation_filename'])
+        except OSError:
+            rot = load_rot(base + nml['rotation_filename'])
 
     return nml, modes, rot
 
@@ -130,7 +135,12 @@ def load_namelist(filename):
         {'n_fine': 50}
 
     """
-    nml = {'p(0)': 1.0}
+    # include valid default values
+    nml = {'user_seed': 0, 'n_fine': 0, 'inclination': 0.0,
+           'cycle_period': 1e99, 'cycle_phase': 0.0, 'nuac': 0.0, 'sdnu': 0.0,
+           'p(0)': 1.0, 'p(1)': 0.0, 'p(2)': 0.0, 'p(3)': 0.0,
+           'add_granulation': True, 'rotation_filename': '',
+           'verbose': False}
 
     with open(filename, 'r') as f:
         lines = [[word.strip() for word in line.split('=')[:2]] for

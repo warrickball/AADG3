@@ -1,4 +1,4 @@
-! Copyright 2018-2019 Warrick Ball & Bill Chaplin
+! Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -17,21 +17,23 @@
 
 program AADG3
 
-  use types, only: dp
+  use types, only: dp, mode
   use math, only: PI, TWOPI, k_to_lm
+  use core, only: overtones
   
   implicit none
-  
+
   integer :: ierr, i, l, m
   integer, parameter :: ntype = 16
   integer :: nc(ntype), user_seed
   integer :: n_cadences, n_relax, n_fine
   real(dp), allocatable :: vtotal(:), v(:)
+  real(dp) :: freq_factor, tau_cad
   real(dp) :: rho, tau, sig
   real(dp) :: inclination, cycle_period, cycle_phase, sdnu(ntype)
-  real(dp) :: pcad, phicad, nsdsum, p(0:3), nuac
+  real(dp) :: period_cad, phase_cad, nsdsum, p(0:3), nuac
   real(dp) :: cadence, nsd(ntype), pvis(ntype), ptot
-  real(dp), dimension(2000, ntype) :: fc, wc, pc, cs
+  type(mode), dimension(2000, ntype) :: modes
   character(50) :: input_filename, modes_filename, rotation_filename, output_filename
   character(50) :: output_fmt
   logical :: add_granulation
@@ -45,21 +47,7 @@ program AADG3
        add_granulation, modes_filename, rotation_filename, &
        output_filename, output_fmt, verbose
 
-  ! set some defaults for input file
-  user_seed = 0
-  cycle_period = 1d6
-  cycle_phase = 0d0
-  nuac = 0
-  p = 0
-  p(0) = 1
-  sdnu = 0
-  output_fmt = '(f16.7)'
-  verbose = .false.
-
-  ! these defaults should force user to choose values
-  n_fine = -1
-  n_relax = -1
-  n_cadences = -1
+  include 'defaults.in'
   
   ierr = 0
 
@@ -74,6 +62,8 @@ program AADG3
   if (verbose) write(*,'(A)',advance='no') 'Checking command line arguments... '
   call check_args
   if (verbose) write(*,'(A)') 'Done.'
+
+  freq_factor = 1d-6*cadence
 
   if (verbose) write(*,'(A)',advance='no') 'Initialising random number generator... '
   if (user_seed == 0) then
@@ -98,7 +88,6 @@ program AADG3
   call random_number(vtotal)  ! warms up RNG
   vtotal = 0
   if (verbose) write(*,'(A)') 'Done.'
-
   
   if (verbose) write(*,'(A)',advance='no') 'Loading mode data... '
   call get_modes
@@ -109,26 +98,28 @@ program AADG3
   ! noise won't be added if ncomp == 0
   ptot = sum(pvis)
 
+  tau_cad = tau/cadence
+
   ! Calculate variances:
-  nsd = sqrt(cadence/tau/n_fine)*sig*sqrt(pvis/ptot)
+  nsd = sqrt(1.0_dp/tau_cad/n_fine)*sig*sqrt(pvis/ptot)
   nsdsum = sum(nsd**2)
   
   ! convert stellar cycle period and phase into multiples of cadence
-  pcad = 2.0*cycle_period*86400.0*365.25/cadence
-  phicad = 2.0*cycle_phase*86400.0*365.25/cadence
+  period_cad = 2.0*cycle_period*86400.0*365.25/cadence
+  phase_cad = 2.0*cycle_phase*86400.0*365.25/cadence
 
   ! main loop, to make overtones of each (l,m):
   if (verbose) write(*,'(A)') 'Computing oscillations... '
   if (verbose) write(*,'(3A6)') 'l', 'm', 'nc'
   
   !$OMP PARALLEL DO SCHEDULE(dynamic) PRIVATE(i,l,m,v) REDUCTION(+:vtotal)
-  do i = 1, ntype
+  do i = ntype, 1, -1
      allocate(v(n_cadences))
      call k_to_lm(i, l, m)
-     ! if (verbose) write(*,'(I5,A4,I2)') i, ' of ', ntype
-     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), i, ' of ', ntype
-     call overtones(nc(i), nsd(i), sdnu(i), &
-          fc(:,i), wc(:,i), pc(:,i), cs(:,i), v)
+     if (verbose) write(*,'(4I6,A4,I2)') l, m, nc(i), ntype+1-i, ' of ', ntype
+     call overtones(n_fine, n_relax, n_cadences, rho, &
+          tau_cad, nsd(i), period_cad, phase_cad, modes(1:nc(i), i), &
+          add_granulation, v)
      vtotal = vtotal + v
      deallocate(v)
   end do
@@ -137,12 +128,12 @@ program AADG3
   if (verbose) write(*,'(A)') 'Finished computing oscillations.'
 
   ! Now output time series to disk:
-  if (verbose) write(*,'(A)',advance='no') 'Saving output timeseries to disk... '
+  if (verbose) write(*,'(A)',advance='no') 'Saving output timeseries to '//trim(output_filename)//'... '
   ierr = 0
   open(newunit=iounit, file=output_filename, status='replace', iostat=ierr)
   if (ierr /= 0) then
      if (verbose) write(*,*) ''
-     write(*,*) 'ERROR in AADG3 while opening ', output_filename
+     write(*,*) 'ERROR in AADG3 while opening '//trim(output_filename)
      stop
   end if
   write(iounit, output_fmt) (vtotal(i), i=1, n_cadences)
@@ -177,14 +168,18 @@ contains
           pvis(k) = p(l)*Elm(l,abs(m))
        end do
     end do
-    
-    call load_rotation(rotation_filename, lbound(s, 1), s)
+
+    if (rotation_filename == '') then
+       s = 0d0
+    else
+       call load_rotation(rotation_filename, lbound(s, 1), s)
+    end if
 
     ierr = 0
     open(newunit=iounit, file=modes_filename, status='old', iostat=ierr)
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3.get_modes while opening ', modes_filename
+       write(*,*) 'ERROR in AADG3.get_modes while opening '//trim(modes_filename)
        stop
     end if
 
@@ -199,7 +194,7 @@ contains
        read(iounit, *, iostat=ierr) l, n, d1, d2, d3, d4
        if (ierr /= 0) then
           if (verbose) write(*,*) ''
-          write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading ', modes_filename
+          write(*,*) 'WARNING in AADG3.get_modes: unexpected early exit while reading '//trim(modes_filename)
           exit
        end if
 
@@ -208,13 +203,16 @@ contains
           if ((pvis(k) > 1d-8) .and. (d3 > 1d-8)) then
              nc(k) = nc(k) + 1
              if (m == 0) then
-                fc(nc(k), k) = d1
+                modes(nc(k), k)% freq = d1
              else
-                fc(nc(k), k) = d1 + m*s(n,l,abs(m))
+                modes(nc(k), k)% freq = d1 + m*s(n,l,abs(m))
              end if
-             wc(nc(k), k) = d2
-             pc(nc(k), k) = pvis(k)*d3
-             cs(nc(k), k) = d4
+             modes(nc(k), k)% freq = modes(nc(k), k)% freq*freq_factor
+             modes(nc(k), k)% damp = d2*freq_factor*PI
+             modes(nc(k), k)% power = pvis(k)*d3
+             modes(nc(k), k)% freq_shift = d4*freq_factor*sdnu(k)
+             modes(nc(k), k)% damp_shift = &
+                  modes(nc(k), k)% damp*sdnu(k)/0.4d0*0.25d0
           end if
           
        end do
@@ -222,7 +220,7 @@ contains
 
     if (ierr > 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3.get_modes while reading ', modes_filename
+       write(*,*) 'ERROR in AADG3.get_modes while reading '//trim(modes_filename)
        stop
     end if
     
@@ -233,64 +231,11 @@ contains
   end subroutine get_modes
 
   
-  subroutine overtones(ncomp, nsdi, sdnui, freqs, widths, powers, Bshifts, vout)
-    
-    use core, only: generate_kicks, laplace_solution
-    
-    integer, intent(in) :: ncomp
-    real(dp), intent(in) :: nsdi, sdnui
-    real(dp), intent(in), dimension(ncomp) :: freqs, widths, powers, Bshifts
-    real(dp), dimension(n_cadences), intent(out) :: vout
-    
-    integer :: j
-    real(dp) :: damp0, freq0
-    ! real(dp) :: nuac
-    real(dp), dimension(n_relax+n_cadences) :: ckick, ukick, kickthis
-    real(dp), dimension(n_cadences) :: vi
-    real(dp) :: dnu, dwid
-
-    vi = 0
-    vout = 0
-
-    ckick = 0
-    call generate_kicks(n_fine, cadence, tau, nsdi, ckick)
-
-    ! loop over the overtones for this (l,|m|) value
-    do j = 1, ncomp
-       ukick = 0
-       call generate_kicks(n_fine, cadence, tau, nsdi, ukick)
-       
-       freq0 = freqs(j)*cadence*1d-6
-       damp0 = cadence*PI*1d-6*widths(j)
-       ! Get shift factor for frequency:
-       dnu = sdnui*Bshifts(j)*cadence*1d-6  ! activity cycle frequency shift
-       ! ... and factor for width:
-       dwid = (sdnui/0.40)*0.25  ! activity cycle width shift
-
-       !   dwid = (sdnui)/0.40)*0.25*(1.0-dabs((fc(j,ic)/(1000.0*nuac))-2.90d0)/1.1d0)
-       !   if ((fc(j,ic)/nuac) < 1800.0.or.((fc(j,ic)/nuac) > 4000.0) dwid = 0.0
-
-       kickthis = rho*ckick + ukick*sqrt(1.0_dp - rho**2)
-
-       call laplace_solution(n_cadences, n_relax, kickthis, freq0, damp0, &
-            powers(j), dnu, dwid, pcad, phicad, vi)
-       vout = vout + vi
-    end do
-
-    if (add_granulation) then
-       vout = vout + ckick(n_relax+1:n_relax+n_cadences)
-    end if
-
-    return
-    
-  end subroutine overtones
-  
-
   subroutine parse_args
     character(80) :: arg
     integer :: i
     
-    call getarg(1, arg)
+    call get_command_argument(1, arg)
     if (arg == '-h' .or. arg == '--help') then
        call show_help
        stop
@@ -302,14 +247,14 @@ contains
        stop
     end if
     
-    call getarg(1, input_filename)
+    call get_command_argument(1, input_filename)
     
     ! Get basic parameters from the information file:
     open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
     
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3 while opening ', input_filename
+       write(*,*) 'ERROR in AADG3 while opening '//trim(input_filename)
        stop 1
     end if
     
@@ -318,7 +263,7 @@ contains
     
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in AADG3 while reading ', input_filename
+       write(*,*) 'ERROR in AADG3 while reading '//trim(input_filename)
        write(*,*) 'the following runtime error may be informative'
        open(newunit=iounit, file=input_filename, status='old', iostat=ierr)
        read(iounit, nml=controls)
@@ -328,62 +273,63 @@ contains
     ! loop over remaining command line arguments to get override input
     ! values
     i = 2
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     do while (arg  /= ' ')
        ! write(*,*) i, arg
        
        ! integer options
-       if (arg == '--user_seed' .or. arg == '--user-seed') then
+       select case (arg)
+       case ('--user_seed', '--user-seed')
           call get_int_arg(i, user_seed)
-       else if (arg == '--n_relax' .or. arg == '--n-relax') then
+       case ('--n_relax', '--n-relax')
           call get_int_arg(i, n_relax)
-       else if (arg == '--n_cadences' .or. arg == '--n-cadences') then
+       case ('--n_cadences', '--n-cadences')
           call get_int_arg(i, n_cadences)
-       else if (arg == '--n_fine' .or. arg == '--n-fine') then
+       case ('--n_fine', '--n-fine')
           call get_int_arg(i, n_fine)
        ! float options
-       else if (arg == '--cadence') then
+       case ('--cadence')
           call get_real_arg(i, cadence)
-       else if (arg == '--sig') then
+       case ('--sig')
           call get_real_arg(i, sig)
-       else if (arg == '--rho') then
+       case ('--rho')
           call get_real_arg(i, rho)
-       else if (arg == '--tau') then
+       case ('--tau')
           call get_real_arg(i, tau)
-       else if (arg == '--inclination') then
+       case ('--inclination')
           call get_real_arg(i, inclination)
-       else if (arg == '--cycle_period' .or. arg == '--cycle-period') then
+       case ('--cycle_period', '--cycle-period')
           call get_real_arg(i, cycle_period)
-       else if (arg == '--cycle_phase' .or. arg == '--cycle-phase') then
+       case ('--cycle_phase', '--cycle-phase')
           call get_real_arg(i, cycle_phase)
        ! logical options
-       else if (arg == '--add_granulation' .or. arg == '--add-granulation') then
+       case ('--add_granulation', '--add-granulation')
           add_granulation = .true.
-       else if (arg == '--no-add_granulation' .or. arg == '--no-add-granulation') then
+       case ('--no-add_granulation', '--no-add-granulation')
           add_granulation = .false.
-       else if (arg == '--verbose' .or. arg == '-v') then
+       case ('--verbose', '-v')
           verbose = .true.
-       else if (arg == '--no-verbose' .or. arg == '--quiet' .or. arg == '-q') then
+       case ('--no-verbose', '--quiet', '-q')
           verbose = .false.
        ! string options
-       else if (arg == '--modes_filename' .or. arg == '--modes-filename') then
+       case ('--modes_filename', '--modes-filename')
           i = i + 1
-          call getarg(i, modes_filename)
-       else if (arg == '--rotation_filename' .or. arg == '--rotation-filename') then
+          call get_command_argument(i, modes_filename)
+       case ('--rotation_filename', '--rotation-filename')
           i = i + 1
-          call getarg(i, rotation_filename)
-       else if (arg == '--output_filename' .or. arg == '--output-filename' .or. arg == '-o') then
+          call get_command_argument(i, rotation_filename)
+       case ('--output_filename', '--output-filename', '-o')
           i = i + 1
-          call getarg(i, output_filename)
-       else
+          call get_command_argument(i, output_filename)
+       case default
           if (verbose) write(*,*) ''
           write(*,*) 'ERROR in AADG3 while parsing command-line arguments'
-          write(*,*) 'argument ', trim(arg), ' is not valid'
+          write(*,*) 'argument '//trim(arg)//' is not valid'
           stop 1
-       end if
+       end select
 
        i = i + 1
-       call getarg(i, arg)
+       call get_command_argument(i, arg)
     end do
     
   end subroutine parse_args
@@ -396,11 +342,11 @@ contains
     character(80) :: arg
     
     i = i + 1
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_int_arg: could not parse string ', arg, 'as integer'
+       write(*,*) 'ERROR in get_int_arg: could not parse string '//trim(arg)//' as integer'
        stop 1
     end if
 
@@ -414,11 +360,11 @@ contains
     character(80) :: arg
 
     i = i + 1
-    call getarg(i, arg)
+    call get_command_argument(i, arg)
     read(arg, *, iostat=ierr) var
     if (ierr /= 0) then
        if (verbose) write(*,*) ''
-       write(*,*) 'ERROR in get_real_arg: could not parse string ', arg, 'as real(dp)'
+       write(*,*) 'ERROR in get_real_arg: could not parse string '//trim(arg)//' as real(dp)'
        stop 1
     end if
 
@@ -426,62 +372,75 @@ contains
   
 
   subroutine check_args
-    
-    if (inclination < 0 .or. inclination > 90) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: inclination must be between 0 and 90 degrees'
-       write(*,*) 'but got ', inclination
-       stop 1
-    end if
 
-    if (rho < 0 .or. rho > 1) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: rho must be between 0 and 1'
-       write(*,*) 'but got ', rho
-       stop 1
-    end if
+    call check_bounds_dp('inclination', inclination, lower=0d0, upper=90d0)
+    call check_bounds_dp('rho', rho, lower=0d0, upper=1d0)
 
-    call check_positive_float('sig', sig)
-    call check_positive_float('rho', rho)
-    call check_positive_float('tau', tau)
-    call check_positive_float('cycle_period', cycle_period)
-    call check_positive_float('cycle_phase', cycle_phase)
+    call check_bounds_dp('cadence', cadence, lower=0d0)
+    call check_bounds_dp('sig', sig, lower=0d0)
+    call check_bounds_dp('tau', tau, lower=0d0)
+    call check_bounds_dp('cycle_period', cycle_period, lower=0d0)
+    call check_bounds_dp('cycle_phase', cycle_phase, lower=0d0)
     
-    call check_positive_int('n_fine', n_fine)
-    call check_positive_int('n_relax', n_relax)
-    call check_positive_int('n_cadences', n_cadences)
+    call check_bounds_int('n_fine', n_fine, lower=0)
+    call check_bounds_int('n_relax', n_relax, lower=0)
+    call check_bounds_int('n_cadences', n_cadences, lower=0)
     
   end subroutine check_args
 
 
-  subroutine check_positive_float(name, val)
+  subroutine check_bounds_dp(name, val, lower, upper)
     
-    character(*) :: name
-    real(dp) :: val
+    character(*), intent(in) :: name
+    real(dp), intent(in) :: val
+    real(dp), intent(in), optional :: lower, upper
 
-    if (val < 0) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: ', name, ' must be positive'
-       write(*,*) 'but got ', val
-       stop 1
+    if (present(lower)) then
+       if (val < lower) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be greater than', lower
+          write(*,*) '       but got ', val
+          stop 1
+       end if
+    end if
+
+    if (present(upper)) then
+       if (val > upper) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be less than', upper
+          write(*,*) '       but got ', val
+          stop 1
+       end if
     end if
     
-  end subroutine check_positive_float
+  end subroutine check_bounds_dp
 
 
-  subroutine check_positive_int(name, val)
+  subroutine check_bounds_int(name, val, lower, upper)
     
-    character(*) :: name
-    integer :: val
+    character(*), intent(in) :: name
+    integer, intent(in) :: val
+    integer, intent(in), optional :: lower, upper
 
-    if (val < 0) then
-       if (verbose) write(*,*) ''
-       write(*,*) 'ERROR: ', name, ' must be positive'
-       write(*,*) 'but got ', val
-       stop 1
+    if (present(lower)) then
+       if (val < lower) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be greater than', lower
+          write(*,*) '       but got ', val
+          stop 1
+       end if
+    end if
+
+    if (present(upper)) then
+       if (val > upper) then
+          if (verbose) write(*,*) ''
+          write(*,*) 'ERROR: '//trim(name)//' must be less than', upper
+          write(*,*) '       but got ', val
+          stop 1
+       end if
     end if
     
-  end subroutine check_positive_int
+  end subroutine check_bounds_int
   
   
   subroutine show_help
@@ -515,7 +474,7 @@ contains
 
   subroutine show_version
 
-    write(*,*) 'AADG3 v3.0.1'
+    write(*,*) 'AADG3 v3.0.2'
 
   end subroutine show_version
   

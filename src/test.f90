@@ -1,4 +1,4 @@
-! Copyright 2018-2019 Warrick Ball & Bill Chaplin
+! Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -174,9 +174,10 @@ contains
     use core, only: laplace_solution
     use math, only: TWOPI
 
-    integer :: n_cadences, n_relax
+    integer :: n_relax, n_cadences
     real(dp), allocatable :: kick(:), v(:), v_test(:), i_cadences(:)
-    real(dp) :: freq0, damp0, power, dnu, dwid, pcad, phicad
+    type(mode) :: m
+    real(dp) :: period_cad, phase_cad
     integer :: i
 
     n_relax = 1000
@@ -190,19 +191,19 @@ contains
 
     kick = 0
     kick(1) = 1
-    freq0 = 0.001_dp
-    damp0 = 0
-    power = 1
-    dnu = 0
-    dwid = 0
-    pcad = 100
-    phicad = 0
+    m% freq = 0.001_dp
+    m% damp = 1d-99 ! can't be zero
+    m% power = 1
+    m% freq_shift = 0
+    m% damp_shift = 0
+    period_cad = 100d0
+    phase_cad = 0d0
 
-    call laplace_solution(n_cadences, n_relax, kick, freq0, damp0, &
-         power, dnu, dwid, pcad, phicad, v)
+    call laplace_solution(n_relax, n_cadences, kick, m, &
+         period_cad, phase_cad, v)
 
     ! https://physics.stackexchange.com/questions/101129/harmonic-oscillator-driven-by-a-dirac-delta-like-force
-    v_test = sqrt(2.0_dp)*cos(TWOPI*i_cadences*freq0)
+    v_test = sqrt(2.0_dp)*cos(TWOPI*i_cadences*m% freq)
 
     do i = 1, n_cadences
        if (.not. almost_equal(v(i), v_test(i))) then
@@ -213,7 +214,7 @@ contains
        end if
     end do
 
-    deallocate(kick, v, v_test)
+    deallocate(i_cadences, kick, v, v_test)
 
     write(*,'(A24,A8)') 'test_laplace_solution   ', 'PASSED'
     

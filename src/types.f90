@@ -1,4 +1,4 @@
-! Copyright 2018-2019 Warrick Ball & Bill Chaplin
+! Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 ! This file is part of the AsteroFLAG Artificial Dataset Generator v3 (AADG3).
 
@@ -16,11 +16,23 @@
 ! along with AADG3.  If not, see <https://www.gnu.org/licenses/>.
 
 module types
-  ! A simple module defining common type definitions for the rest of
-  ! AADG3.  Currently only defines the double precision type ``dp``.
+  ! Defines common type definitions for the rest of AADG3.
 
   implicit none
 
   integer, parameter :: dp = kind(0.0d0)
+
+  type mode
+     ! Single object containing all the parameters for a single mode
+     ! (from the simulation's perspective).
+     
+     ! All times are in cadences
+     real(dp) :: freq
+     real(dp) :: damp ! = PI*width
+     real(dp) :: power
+     real(dp) :: freq_shift = 0.0d0
+     real(dp) :: damp_shift = 0.0d0
+     real(dp) :: power_shift = 0.0d0
+  end type mode
 
 end module types

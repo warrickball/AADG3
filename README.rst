@@ -40,7 +40,7 @@ Documentation for AADG3 is available `here <https://warrickball.github.io/AADG3/
 License
 -------
 
-Copyright 2018-2019 Warrick Ball & Bill Chaplin
+Copyright 2018-2020 Warrick Ball & Bill Chaplin
 
 AADG3 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
