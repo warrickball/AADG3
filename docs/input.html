@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Input files and command-line arguments &#8212; AADG3 3.0.2 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fortran APIs" href="fortran.html" />
+    <link rel="prev" title="The AsteroFLAG Artificial Dataset Generator 3 (AADG3)" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="input-files-and-command-line-arguments">
+<h1>Input files and command-line arguments<a class="headerlink" href="#input-files-and-command-line-arguments" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="namelist-control-file">
+<h2>Namelist control file<a class="headerlink" href="#namelist-control-file" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_seed</span></code> (<em>integer</em>)</p>
+<p>Seed used for random number generator to facilitate reproducible
+results.</p>
+<p>If greater than zero, the value is used to create a series of
+integers passed to the intrinsic <code class="docutils literal notranslate"><span class="pre">random_seed</span></code> function (see the
+code for details).</p>
+<p>If equal to zero, then the random number generator (RNG) is
+initialised by calling <code class="docutils literal notranslate"><span class="pre">random_seed</span></code> without an argument.  Note
+that this gives different behaviour for <code class="docutils literal notranslate"><span class="pre">gfortran</span></code> major versions
+up to and including 6 versus major versions from 7 onwards.  In the
+former (major versions <span class="math notranslate nohighlight">\(\leq6\)</span>), the RNG is initialised to
+some default state, which will be the same each time the program is
+run (on a given system).  In the latter (major versions
+<span class="math notranslate nohighlight">\(\geq7\)</span>), the RNG is initialised using random data from the
+operating system and will produce different output each time the
+program is run.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cadence</span></code> (<em>float</em>)</p>
+<p>Cadence of the timeseries in seconds.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_cadences</span></code> (<em>integer</em>)</p>
+<p>Number of cadences in the timeseries.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_relax</span></code> (<em>integer</em>)</p>
+<p>The number of cadences over which the stochastic driving term is
+allowed to build up from zero.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_fine</span></code> (<em>integer</em>)</p>
+<p>When the driving terms (“kicks”) are generated, the cadence is
+subdivided into <code class="docutils literal notranslate"><span class="pre">n_fine</span></code> subcadences.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sig</span></code> (<em>float</em>)</p>
+<p>Rms amplitude of the granulation.  The power spectral density of the
+granulation at frequency <span class="math notranslate nohighlight">\(\nu\)</span> will be approximately
+<span class="math notranslate nohighlight">\(2\sigma^2\tau/(1+(2\pi\nu\tau)^2)\)</span>, where <span class="math notranslate nohighlight">\(\tau\)</span> is the
+granulation timescale as set by <code class="docutils literal notranslate"><span class="pre">tau</span></code>, above.  A typical solar
+value for <code class="docutils literal notranslate"><span class="pre">sig</span></code> is <code class="docutils literal notranslate"><span class="pre">60d0</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rho</span></code> (<em>float</em>)</p>
+<p>Relative weighting of the correlated kicks (<span class="math notranslate nohighlight">\(u_c\)</span>) and
+uncorrelated kicks (<span class="math notranslate nohighlight">\(u_u\)</span>).  The total kick is <span class="math notranslate nohighlight">\(u=\rho
+u_c + \sqrt{1-\rho^2}u_u\)</span>, so that <code class="docutils literal notranslate"><span class="pre">rho=0</span></code> means purely
+uncorrelated kicks and <code class="docutils literal notranslate"><span class="pre">rho=1</span></code> means purely correlated kicks.  See
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2006MNRAS.371.1731T">Toutain et al. (2006)</a> for details.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<em>float</em>)</p>
+<p>Timescale for the granulation in seconds.  A typical solar value is
+for <code class="docutils literal notranslate"><span class="pre">tau</span></code> is about <code class="docutils literal notranslate"><span class="pre">250d0</span></code>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inclination</span></code> (<em>float</em>)</p>
+<p>Inclination angle of the rotation axis in degrees.  That is, <code class="docutils literal notranslate"><span class="pre">90d0</span></code>
+is edge-on and <code class="docutils literal notranslate"><span class="pre">0d0</span></code> is pole-on.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p(:)</span></code> (<em>float</em>, <em>default p(0)=1.0d0, p(1:)=0.0d0</em>)</p>
+<p>Visibility ratios for modes of different angular degrees, as
+indicated by the index of the array.  By definition, <code class="docutils literal notranslate"><span class="pre">p(0)</span></code> should
+be 1, which is the default.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_granulation</span></code> (<em>logical</em>)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">.true.</span></code>, add the granulation signal to the timeseries for the
+oscillation modes.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modes_filename</span></code> (<em>string</em>)</p>
+<p>Name of the file containing the mode frequency information (usually
+ending <code class="docutils literal notranslate"><span class="pre">.con</span></code>).</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rotation_filename</span></code> (<em>string</em>, <em>default=’’</em>)</p>
+<p>Name of the file containing the rotational splitting information
+(usually ending <code class="docutils literal notranslate"><span class="pre">.rot</span></code>).  If empty (i.e. <code class="docutils literal notranslate"><span class="pre">''</span></code>), then the
+rotation rate is taken to be zero.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_filename</span></code> (<em>string</em>)</p>
+<p>Name of the file for the output timeseries.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_fmt</span></code> (<em>string</em>, <em>default=’(f16.7)’</em>)</p>
+<p>Format statement for the timeseries.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code> (<em>logical</em>, <em>default=.false.</em>)</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">.true.</span></code>, print some information to the terminal as the
+simulation progresses.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="mode-data-file-format-modes-filename">
+<h2>Mode data file format (<code class="docutils literal notranslate"><span class="pre">modes_filename</span></code>)<a class="headerlink" href="#mode-data-file-format-modes-filename" title="Permalink to this headline">¶</a></h2>
+<p>The file <code class="docutils literal notranslate"><span class="pre">modes_filename</span></code>, specified in the namelist control file,
+contains details about the modes that are determined by the radial
+order <span class="math notranslate nohighlight">\(n\)</span> and angular degree <span class="math notranslate nohighlight">\(\ell\)</span> but not the azimuthal
+order <span class="math notranslate nohighlight">\(m\)</span>. i.e. everything except the rotational splittings.  The file
+must have six columns, giving the</p>
+<ul class="simple">
+<li><p>angular degree <span class="math notranslate nohighlight">\(\ell\)</span>,</p></li>
+<li><p>radial order <span class="math notranslate nohighlight">\(n\)</span>,</p></li>
+<li><p>frequency <span class="math notranslate nohighlight">\(\nu\)</span> in <span class="math notranslate nohighlight">\(\mu\mathrm{Hz}\)</span>,</p></li>
+<li><p>linewidth <span class="math notranslate nohighlight">\(\Gamma\)</span> in <span class="math notranslate nohighlight">\(\mu\mathrm{Hz}\)</span>,</p></li>
+<li><p>rms power in units of the desired output
+(e.g. <span class="math notranslate nohighlight">\((\mathrm{cm}/\mathrm{s})^2\)</span> or <span class="math notranslate nohighlight">\(\mathrm{ppm}^2\)</span>),
+and</p></li>
+<li><p>activity-induced frequency shift in <span class="math notranslate nohighlight">\(\mu\mathrm{Hz}\)</span></p></li>
+</ul>
+<p>of each mode.  For example, the line specifying an
+<span class="math notranslate nohighlight">\((n,\ell)=(21,1)\)</span> mode with no cycle shift, frequency
+<span class="math notranslate nohighlight">\(3\,\mathrm{mHz}\)</span>, linewidth <span class="math notranslate nohighlight">\(1\mu\mathrm{Hz}\)</span> and power
+<span class="math notranslate nohighlight">\(10\,\mathrm{ppm}^2\)</span> would read something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span>  <span class="mi">21</span>   <span class="mf">3000.0</span>   <span class="mf">1.0</span>   <span class="mf">10.0</span>   <span class="mf">0.0</span>
+</pre></div>
+</div>
+<p>Lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> or <code class="docutils literal notranslate"><span class="pre">!</span></code> are ignored.</p>
+</div>
+<div class="section" id="rotational-splitting-file-format-rotation-filename">
+<h2>Rotational splitting file format (<code class="docutils literal notranslate"><span class="pre">rotation_filename</span></code>)<a class="headerlink" href="#rotational-splitting-file-format-rotation-filename" title="Permalink to this headline">¶</a></h2>
+<p>The file <code class="docutils literal notranslate"><span class="pre">rotation_filename</span></code>, specified in the namelist control
+file, contains details about the rotational splittings of the modes,
+which depend on the radial order <span class="math notranslate nohighlight">\(n\)</span>, angular degree
+<span class="math notranslate nohighlight">\(\ell\)</span> and azimuthal order <span class="math notranslate nohighlight">\(m\)</span>.  The file must have
+four columns, giving the</p>
+<ul class="simple">
+<li><p>radial order <span class="math notranslate nohighlight">\(n\)</span>,</p></li>
+<li><p>angular degree <span class="math notranslate nohighlight">\(\ell\)</span>,</p></li>
+<li><p>azimuthal order <span class="math notranslate nohighlight">\(m\)</span>, and</p></li>
+<li><p>rotational splitting <span class="math notranslate nohighlight">\(\delta\nu_{nlm}\)</span></p></li>
+</ul>
+<p>of each mode.</p>
+<p>The rotation splitting is assumed to be the same for <span class="math notranslate nohighlight">\(m\)</span> and
+<span class="math notranslate nohighlight">\(-m\)</span>, so the file must only specifiy splittings for positive
+<span class="math notranslate nohighlight">\(m\)</span>.</p>
+<p>The rotational splittings will be multiplied by <span class="math notranslate nohighlight">\(m\)</span>, so an
+<span class="math notranslate nohighlight">\(m=2\)</span> mode with rotational splitting <span class="math notranslate nohighlight">\(400\,\mathrm{nHz}\)</span>
+will be separated from the <span class="math notranslate nohighlight">\(m=0\)</span> mode by
+<span class="math notranslate nohighlight">\(800\,\mathrm{nHz}\)</span>.  If <span class="math notranslate nohighlight">\((n,\ell)=(21,1)\)</span>, this mode
+would be specified by the line</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">21</span>  <span class="mi">1</span>  <span class="mi">2</span>  <span class="mf">0.400</span>
+</pre></div>
+</div>
+<p>Lines starting with <code class="docutils literal notranslate"><span class="pre">#</span></code> or <code class="docutils literal notranslate"><span class="pre">!</span></code> are ignored.</p>
+</div>
+<div class="section" id="command-line-arguments">
+<h2>Command-line arguments<a class="headerlink" href="#command-line-arguments" title="Permalink to this headline">¶</a></h2>
+<p>In normal operation, the first command line argument should always be
+the namelist control file.  Thereafter, any of the namelist controls
+above can be overridden on the command line by invoking AADG3 with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AADG3</span> <span class="n">controls</span><span class="o">.</span><span class="ow">in</span> <span class="o">--</span><span class="n">option</span> <span class="n">value</span>
+</pre></div>
+</div>
+<p>For example, if you wanted to run the timeseries for 40000 cadences
+instead of the number in the input file, you could use</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AADG3</span> <span class="n">controls</span><span class="o">.</span><span class="ow">in</span> <span class="o">--</span><span class="n">n_cadences</span> <span class="mi">40000</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AADG3</span> <span class="n">controls</span><span class="o">.</span><span class="ow">in</span> <span class="o">--</span><span class="n">n</span><span class="o">-</span><span class="n">cadences</span> <span class="mi">40000</span>
+</pre></div>
+</div>
+<p>For a boolean (true/false) option, adding it as a command-line
+argument sets it to true.  Using <code class="docutils literal notranslate"><span class="pre">--no-option</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">--option</span></code> will set it to false. e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AADG3</span> <span class="n">controls</span><span class="o">.</span><span class="ow">in</span> <span class="o">--</span><span class="n">add</span><span class="o">-</span><span class="n">granulation</span>
+</pre></div>
+</div>
+<p>will set <code class="docutils literal notranslate"><span class="pre">add_granulation</span></code> to true, whereas</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AADG3</span> <span class="n">controls</span><span class="o">.</span><span class="ow">in</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">add</span><span class="o">-</span><span class="n">granulation</span>
+</pre></div>
+</div>
+<p>will set <code class="docutils literal notranslate"><span class="pre">add_granulation</span></code> to false.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> option is a special case.  It can be set and unset as
+above but, in addition, it can be set with <code class="docutils literal notranslate"><span class="pre">-v</span></code> and unset with
+<code class="docutils literal notranslate"><span class="pre">--quiet</span></code> or <code class="docutils literal notranslate"><span class="pre">-q</span></code>.</p>
+<p>The alias <code class="docutils literal notranslate"><span class="pre">-o</span></code> can be used as a shorthand for <code class="docutils literal notranslate"><span class="pre">--output-file</span></code>.</p>
+<p>Failure to parse a genuine option is a bug and should be reported.</p>
+<p>Other command line options are:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">-h</span></code>, <code class="docutils literal notranslate"><span class="pre">--help</span></code></p>
+<p>Shows some help, then quits.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-V</span></code>, <code class="docutils literal notranslate"><span class="pre">--version</span></code></p>
+<p>Shows the version number, then quits.</p>
+</li>
+</ul>
+<p>Both of these options must be the first argument after <code class="docutils literal notranslate"><span class="pre">AADG3</span></code> if
+they are used.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">AADG3</a></h1>
+
+
+
+
+
+
+
+
+
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Input files and command-line arguments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#namelist-control-file">Namelist control file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mode-data-file-format-modes-filename">Mode data file format (<code class="docutils literal notranslate"><span class="pre">modes_filename</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rotational-splitting-file-format-rotation-filename">Rotational splitting file format (<code class="docutils literal notranslate"><span class="pre">rotation_filename</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-arguments">Command-line arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fortran.html">Fortran APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python module API</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">The AsteroFLAG Artificial Dataset Generator 3 (AADG3)</a></li>
+      <li>Next: <a href="fortran.html" title="next chapter">Fortran APIs</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018-2020, Warrick Ball, Bill Chaplin.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/input.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
